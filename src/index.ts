@@ -2,7 +2,9 @@
 import express from 'express';
 import dotenv from 'dotenv';
 // Middlewares
-import checkToken from '@middleware/auth';
+import checkToken from '@middlewares/auth';
+// Routes
+import { test } from '@routes';
 // Utils
 import { niceLog } from '@utils/niceLog';
 
@@ -27,6 +29,7 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 app.use(checkToken);
+app.use(test);
 
 const server = app.listen(port, () => {
   const addressInfo = server.address();
