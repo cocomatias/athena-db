@@ -9,10 +9,7 @@ import { niceLog } from '@utils/niceLog';
 dotenv.config();
 
 // Check if required environment variables are present
-const requiredEnvVariables = [
-  'OPENAI_API_KEY',
-  'SECRET_KEY',
-];
+const requiredEnvVariables = ['OPENAI_API_KEY', 'SECRET_KEY'];
 
 for (const envVariable of requiredEnvVariables) {
   if (!process.env[envVariable]) {
