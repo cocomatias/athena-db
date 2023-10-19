@@ -1,0 +1,35 @@
+#!/bin/sh
+
+echo "\nChecking for staged changes...\n"
+git diff --cached --quiet
+STAGED_CHANGES=$?
+
+if [ $STAGED_CHANGES -ne 0 ]; then
+  echo "\nThere are staged changes. Running ESLint...\n"
+  yarn lint
+  ESLINT_RESULT=$?
+
+  echo "\nRunning Prettier...\n"
+  yarn format
+  PRETTIER_RESULT=$?
+
+  echo "\nChecking Types...\n"
+  yarn check-types
+  CHECK_TYPES_RESULT=$?
+
+  if [ $ESLINT_RESULT -ne 0 ]; then
+    echo "\nESLint found issues. Commit aborted.\n"
+    exit 1
+  fi
+
+  if [ $PRETTIER_RESULT -ne 0 ]; then
+    echo "\nPrettier found issues. Commit aborted.\n"
+    exit 1
+  fi
+  if [ $CHECK_TYPES_RESULT -ne 0 ]; then
+    echo "\nType errors found. Commit aborted.\n"
+    exit 1
+  fi
+else
+  echo "\nNo staged changes found. Skipping ESLint, Prettier & Check Types.\n"
+fi

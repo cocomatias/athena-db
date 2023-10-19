@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "target": "es6",
+    "module": "commonjs",
+    "strict": true,
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+    "sourceMap": true,
+    "jsx": "preserve",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "baseUrl": "src",
+    "paths": {
+      "@types": ["../types"],
+      "@utils/*": ["utils/*"],
+      "@chains/*": ["chains/*"],
+      "@routes": ["routes"],
+      "@middleware/*": ["middleware/*"]
+    }
+  },
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "exclude": ["node_modules"]
+}
