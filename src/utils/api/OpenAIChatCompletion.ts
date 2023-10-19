@@ -160,7 +160,10 @@ export class OpenAIChatCompletion extends BaseClass {
 }
 
 class FunctionCallError extends Error {
-  constructor(message: string, public innerError?: Error) {
+  constructor(
+    message: string,
+    public innerError?: Error,
+  ) {
     super(message);
     this.name = 'FunctionCallError';
   }

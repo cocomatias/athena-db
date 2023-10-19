@@ -68,7 +68,11 @@ abstract class BaseRoute {
    * @param message The message to log
    * @description Logs a message
    */
-  protected log(title: string | undefined, message: any, error?: boolean): void {
+  protected log(
+    title: string | undefined,
+    message: any,
+    error?: boolean,
+  ): void {
     if (this.verbose) {
       niceLog(
         `${this.req.path} endpoint${title ? ` - ${title}` : ''}`,
