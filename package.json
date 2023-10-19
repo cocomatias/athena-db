@@ -6,7 +6,7 @@
   "author": "cocomatias <matiascoco99@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "postinstall": "npx husky install",
+    "prepare": "husky install",
     "dev": "nodemon --exec ts-node -r tsconfig-paths/register --ignore 'hnswlib-vs-*' src/index.ts",
     "start": "ts-node -r tsconfig-paths/register --ignore 'hnswlib-vs-*' src/index.ts",
     "check-types": "tsc --noEmit",
