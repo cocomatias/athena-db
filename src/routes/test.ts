@@ -4,7 +4,9 @@ import express, { Request, Response, Router } from 'express';
 import BaseRoute from '@utils/api/BaseRoute';
 import { OpenAIChatCompletion } from '@utils/api/OpenAIChatCompletion';
 // Types
-import { GPTModelName } from '@types';
+import { AIDBData, GPTModelName } from '@types';
+import { groupDataByTokens } from '@utils/groupDataByTokens';
+import { SupabaseConnection } from '@utils/api/SupabaseConnection';
 
 const router = Router();
 // Parse JSON bodies (as sent by API clients)
@@ -12,21 +14,16 @@ router.use(express.json());
 
 class TestRoute extends BaseRoute {
   execute = async () => {
-    this.sendMessage('Test route called 1');
-    // this.log('Testing', 'Test route called');
+    const supabase = new SupabaseConnection(true);
+    const tableData = {
+      name: 'test1',
+    };
+    const aiTableData = await supabase.insertData({
+      table_name: 'ai_db_table',
+      data: tableData,
+    });
 
-    const cp = await new OpenAIChatCompletion({
-      verbose: true,
-      model: GPTModelName.GPT316k,
-      messages: [
-        {
-          role: 'user',
-          content: 'Hey, im testing an API with you. How are you?',
-        },
-      ],
-    }).call();
-
-    this.res.send(cp);
+    this.returnResponse(aiTableData);
   };
 }
 

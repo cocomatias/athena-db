@@ -14,9 +14,9 @@ type BaseRouteParams = {
 abstract class BaseRoute {
   protected req: Request;
   protected res: Response;
-  protected streaming: boolean = false;
-  protected allowStreaming: boolean = false;
-  protected verbose: boolean;
+  private streaming: boolean = false; // The checkStreaming function is the only one that can set this property
+  protected allowStreaming: boolean = false; // Whether to allow streaming or not
+  protected verbose: boolean; // Whether to log messages or not
 
   constructor(params: BaseRouteParams) {
     this.req = params.req;
@@ -30,6 +30,9 @@ abstract class BaseRoute {
    */
   abstract execute(): Promise<void>;
 
+  /**
+   * @description Checks if streaming is enabled and sets the headers accordingly. Its also responsible for setting the streaming property across the class.
+   */
   private checkStreaming = () => {
     const streaming = this.req.body.streaming;
     if (streaming && this.allowStreaming) {
@@ -95,6 +98,27 @@ abstract class BaseRoute {
       this.res.end();
     } else {
       return this.res.status(500).send(error.message || error);
+    }
+  };
+
+  /**
+   * @param response The response to return
+   * @description Returns a response
+   * @returns The response. If streaming is enabled, it will send the response and end the request, else it will return the response.
+   */
+  protected returnResponse = (response?: any) => {
+    if (this.streaming) {
+      if (response) {
+        response =
+          typeof response === 'string' ? response : JSON.stringify(response);
+        this.sendMessage(response);
+      }
+      this.res.end();
+    } else {
+      if (!response) {
+        throw new Error('Response is undefined');
+      }
+      return this.res.send(response);
     }
   };
 }

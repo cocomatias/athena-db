@@ -1,5 +1,6 @@
+// Vendors
 import { ChatCompletionCreateParams } from 'openai/resources/chat';
-
+import { PostgrestFilterBuilder } from '@supabase/postgrest-js';
 /*
  * ========= OpenAI =========
  */
@@ -83,3 +84,51 @@ export enum GPTModelName {
 export type SendMessageFunction = {
   sendMessageFunction?: (message: string) => Promise<void>;
 };
+
+/*
+ * ========= AI DB Data =========
+ */
+export type AIDBData = {
+  tokens: number;
+  [key: string]: any;
+};
+
+/*
+ * ========= Supabase =========
+ */
+export type SupabaseQuery = PostgrestFilterBuilder<any, any, any[], unknown>;
+
+export type BaseQueryParams = {
+  table_name: SupabaseDBNames; // The Supabase table name
+  ai_table_name: string; // The AI DB table name
+};
+
+export type BuildQueryParams = BaseQueryParams & {
+  range?: [number, number]; // The range of data to fetch. We use this because Supabase doesn't support pagination, and it has a limit of 1000 rows per request (https://supabase.io/docs/reference/javascript/select)
+  count?: boolean;
+};
+
+export type BaseSupabaseResponse = {
+  created_at: string;
+  updated_at: string;
+  id: string;
+};
+
+export type SupabaseAIDBData = BaseSupabaseResponse & {
+  data: Record<string, any>;
+  ai_table_name: string;
+  data_chunk: string;
+};
+
+export type SupabaseAIDBTable = BaseSupabaseResponse & {
+  name: string;
+  description: string;
+};
+
+export type SupabaseDataChunk = BaseSupabaseResponse & {
+  formattedData: string;
+  summary: string;
+  ai_table_name: string;
+};
+
+export type SupabaseDBNames = 'ai_db_data' | 'ai_db_table' | 'ai_db_data_chunk';
