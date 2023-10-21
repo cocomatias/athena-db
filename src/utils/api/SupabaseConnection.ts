@@ -200,7 +200,7 @@ export class SupabaseConnection extends BaseClass {
     let response: any;
     const updated_at = new Date();
     data = { ...data, updated_at };
-    
+
     const {
       data: responseData,
       error,

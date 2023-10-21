@@ -5,12 +5,14 @@ type GroupDataByTokensParams = {
   tokensLimit: number;
 };
 
-export const groupDataByTokens = (params: GroupDataByTokensParams): AIDBData[][] => {
+export const groupDataByTokens = (
+  params: GroupDataByTokensParams,
+): AIDBData[][] => {
   const { data, tokensLimit } = params;
 
   // Sort data by tokens to evenly distribute them across the groups
   const sortedData = [...data].sort((a, b) => b.tokens - a.tokens);
-  
+
   // Initialize an empty array to store grouped data
   const groupedData: AIDBData[][] = [];
 
@@ -34,7 +36,8 @@ export const groupDataByTokens = (params: GroupDataByTokensParams): AIDBData[][]
     if (minTokens + item.tokens <= tokensLimit) {
       groupedData[minGroupIndex].push(item);
       groupTokensCount[minGroupIndex] += item.tokens;
-    } else { // Otherwise, create a new group
+    } else {
+      // Otherwise, create a new group
       groupedData.push([item]);
       groupTokensCount.push(item.tokens);
     }
