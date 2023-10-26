@@ -1,8 +1,4 @@
-import {
-  DataWithTokens,
-  SupabaseData,
-  SupabaseDataWithTokens,
-} from '@types';
+import { DataWithTokens, SupabaseData, SupabaseDataWithTokens } from '@types';
 
 export const mockDBDataWithoutTokens = [
   {
