@@ -5,10 +5,17 @@ import {
   PostgrestError,
 } from '@supabase/supabase-js';
 import {
+  DataChunkInsert,
+  DataChunkUpdate,
+  DataInsert,
+  DataUpdate,
+  AIDBTableInsert,
+  AIDBTableUpdate,
   BaseQueryParams,
   BuildQueryParams,
   SupabaseDBNames,
   SupabaseQuery,
+  SupabaseUpdateDataFunctionParams,
 } from '@types';
 // Utils
 import { BaseClass } from '@utils/BaseClass';
@@ -190,22 +197,28 @@ export class SupabaseConnection extends BaseClass {
     }
   };
 
+  /**
+   * @description Inserts data into a Supabase table
+   * @param table_name The Supabase table name
+   * @param data The data to insert
+   * @returns The Supabase response
+   */
   public insertData = async ({
     table_name,
     data,
   }: {
     table_name: SupabaseDBNames;
-    data: any;
+    data: (AIDBTableInsert | DataInsert | DataChunkInsert)[];
   }) => {
-    let response: any;
+    let response: any | any[];
     const updated_at = new Date();
-    data = { ...data, updated_at };
+    const insertData = data.map((d) => ({ ...d, updated_at }));
 
     const {
       data: responseData,
       error,
       statusText,
-    } = await this.supabase.from(table_name).insert(data).select();
+    } = await this.supabase.from(table_name).insert(insertData).select();
 
     response = responseData;
     if (error) {
@@ -213,5 +226,68 @@ export class SupabaseConnection extends BaseClass {
     }
 
     return { data: response, error };
+  };
+
+  /**
+   * @description Updates data in a Supabase table
+   * @param id The id of the record to update. (For 'ai_db_table' table, this is the `name` column)
+   * @param table_name The Supabase table name
+   * @param data The data to update
+   * @returns The Supabase response
+   */
+  public updateData = async (params: SupabaseUpdateDataFunctionParams) => {
+    const { table_name, id } = params;
+    let response: any[] | null | string;
+    const updated_at = new Date();
+    const data = { ...params.data, updated_at };
+
+    const query = this.supabase.from(table_name).update(data);
+
+    if (table_name === 'ai_db_table') {
+      query.eq('name', id);
+    } else {
+      query.eq('id', id);
+    }
+
+    const { data: responseData, error, statusText } = await query.select();
+
+    response = responseData;
+    if (error) {
+      response = statusText;
+    }
+
+    return { data: response, error };
+  };
+
+  /**
+   * @description Deletes data from a Supabase table
+   * @param id The id of the record to delete. (For 'ai_db_table' table, this is the `name` column)
+   * @param table_name The Supabase table name
+   * @returns The Supabase response
+   */
+  public deleteData = async (params: {
+    table_name: SupabaseDBNames;
+    id: string[];
+  }) => {
+    const { table_name, id } = params;
+    let response: string | null;
+
+    const query = this.supabase.from(table_name).delete();
+
+    if (table_name === 'ai_db_table') {
+      query.in('name', id);
+    } else {
+      query.in('id', id);
+    }
+
+    const { error } = await query;
+
+    response = `Deleted ${id.length} records from '${table_name}' table`;
+    if (error) {
+      this.log('deleteData - Error', error);
+      response = null;
+    }
+
+    return { data: response, error: error?.message || null };
   };
 }

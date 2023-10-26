@@ -88,7 +88,7 @@ export type SendMessageFunction = {
 /*
  * ========= AI DB Data =========
  */
-export type AIDBData = {
+export type DataWithTokens = {
   tokens: number;
   [key: string]: any;
 };
@@ -100,7 +100,7 @@ export type SupabaseQuery = PostgrestFilterBuilder<any, any, any[], unknown>;
 
 export type BaseQueryParams = {
   table_name: SupabaseDBNames; // The Supabase table name
-  ai_table_name: string; // The AI DB table name
+  ai_table_name?: string; // The AI DB table name
 };
 
 export type BuildQueryParams = BaseQueryParams & {
@@ -114,10 +114,10 @@ export type BaseSupabaseResponse = {
   id: string;
 };
 
-export type SupabaseAIDBData = BaseSupabaseResponse & {
+export type SupabaseData = BaseSupabaseResponse & {
   data: Record<string, any>;
   ai_table_name: string;
-  data_chunk: string;
+  data_chunk: string | null; // Initially, this is null. After the data chunk is created, this will be the data chunk id
 };
 
 export type SupabaseAIDBTable = BaseSupabaseResponse & {
@@ -132,3 +132,61 @@ export type SupabaseDataChunk = BaseSupabaseResponse & {
 };
 
 export type SupabaseDBNames = 'ai_db_data' | 'ai_db_table' | 'ai_db_data_chunk';
+
+/*
+ * ========= Supabase Connection Methods Parameters =========
+ */
+export type SupabaseUpdateDataFunctionParams = {
+  table_name: SupabaseDBNames;
+  data: AIDBTableUpdate | DataUpdate | DataChunkUpdate;
+  id: string;
+};
+
+/*
+ * ========= Supabase insert or update =========
+ */
+export type AIDBTableUpdate = {
+  description?: string;
+  name?: string;
+};
+
+export type AIDBTableInsert = {
+  name: string;
+  description?: string;
+};
+
+export type DataUpdate = {
+  data?: Record<string, any>;
+  ai_table_name?: string;
+  data_chunk?: string;
+};
+
+export type DataInsert = {
+  data: Record<string, any>;
+  ai_table_name: string;
+  data_chunk?: string;
+};
+
+export type DataChunkUpdate = {
+  formattedData?: string;
+  summary?: string;
+  ai_table_name?: string;
+};
+
+export type DataChunkInsert = {
+  formattedData: string;
+  summary: string;
+  ai_table_name: string;
+};
+
+export type SupabaseDataWithTokens = SupabaseData & {
+  tokens: number;
+};
+
+/*
+ * ========= Data chunk creator =========
+ */
+export type AddDataParams = {
+  data: DataInsert['data'][];
+  ai_table_name: DataInsert['ai_table_name'];
+};

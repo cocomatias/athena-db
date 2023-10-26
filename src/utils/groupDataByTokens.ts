@@ -1,20 +1,20 @@
-import { AIDBData } from '@types'; // Assuming AIDBData is imported correctly
+import { DataWithTokens } from '@types'; // Assuming AIDBData is imported correctly
 
 type GroupDataByTokensParams = {
-  data: AIDBData[];
+  data: DataWithTokens[];
   tokensLimit: number;
 };
 
 export const groupDataByTokens = (
   params: GroupDataByTokensParams,
-): AIDBData[][] => {
+): DataWithTokens[][] => {
   const { data, tokensLimit } = params;
 
   // Sort data by tokens to evenly distribute them across the groups
   const sortedData = [...data].sort((a, b) => b.tokens - a.tokens);
 
   // Initialize an empty array to store grouped data
-  const groupedData: AIDBData[][] = [];
+  const groupedData: DataWithTokens[][] = [];
 
   // Initialize a tokens counter for each group
   const groupTokensCount: number[] = [];
