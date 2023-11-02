@@ -1,254 +1,268 @@
 import {
-  DataWithTokens,
-  DataChunkInsert,
+  AIDBTableInsert,
+  AddDataParams,
   DataInsert,
-  GPTModelName,
-  SupabaseData,
+  SupabaseAIDBTable,
   SupabaseDBNames,
+  SupabaseGetDataResponse,
+  GroupedDataObject,
   SupabaseDataChunk,
-  SupabaseDataWithTokens,
-  DataUpdate,
 } from '@types';
 import { BaseClass } from '@utils/BaseClass';
 import { SupabaseConnection } from './SupabaseConnection';
-import { groupDataByTokens } from '@utils/groupDataByTokens';
-import { getTokensLimit } from '@utils/getTokensLimit';
-import { getStringFromObject } from '@utils/getStringFromObject';
+import { DataChunks } from './DataChunks';
 import { getTokens } from '@utils/getTokens';
-import { PostgrestError } from '@supabase/supabase-js';
+import { getStringFromObject } from '@utils/getStringFromObject';
+import { OpenAIEmbeddings } from './OpenAIEmbeddings';
 
 type DataManagerParams = {
   verbose?: boolean;
 };
 
-type DataUpdatesParams = { data: DataUpdate; id: string };
-type CreateDataChunkParams = {
-  data: SupabaseDataWithTokens[];
+type DataToInsertInDataChunk = {
+  data_chunk_id?: string; // If the data chunk is new, this will be undefined
+  formatted_data?: string; // If the data chunk is new, this will be undefined
   ai_table_name: string;
+  data: DataInsert[];
+  tokens: number;
 };
 
-type CreatedDataChunk = {
-  data: SupabaseData[];
-  dataChunk: SupabaseDataChunk;
+type DataManagerAddParams = {
+  data: AddDataParams[];
+  createAITableIfNotExists?: boolean;
 };
 
 export class DataManager extends BaseClass {
-  private model: GPTModelName = GPTModelName.GPT316k;
-  private dataChunkTableName: SupabaseDBNames = 'ai_db_data_chunk';
-  private dataTableName: SupabaseDBNames = 'ai_db_data';
-  //   private tokensLimit = getTokensLimit(this.model);
-  private tokensLimit = 200;
   private supabase = new SupabaseConnection(this.verbose);
-  constructor({ verbose }: DataManagerParams) {
-    super({ verbose });
+  private dataChunks = new DataChunks({ verbose: this.verbose });
+  private dataChunksTokensLimit = this.dataChunks.tokensLimit;
+  private supabaseAITableName: SupabaseDBNames = 'ai_db_table';
+  private totalUsage = 0;
+  private totalCost = 0;
+
+  constructor(params: DataManagerParams) {
+    super(params);
   }
 
-  public createDataWithTokens = async (params: SupabaseData[] | null) => {
-    try {
-      const dataWithTokens: SupabaseDataWithTokens[] = [];
+  /**
+   * @description Creates a data object with the tokens, embedding, and formatted_data
+   * @param data The data to create the data object from
+   * @returns The data object
+   */
+  public createDataObject = async (data: AddDataParams) => {
+    const formatted_data = getStringFromObject(data.data);
+    const aiTable = data.ai_table_name;
+    const tokens = await getTokens(formatted_data);
+    const embeddingData = await new OpenAIEmbeddings({
+      verbose: this.verbose,
+      text: formatted_data,
+    }).call();
 
-      if (params) {
-        for (let i = 0; i < params.length; i++) {
-          const supabaseData = params[i];
-          const tokens = await getTokens(
-            getStringFromObject(supabaseData.data),
-          );
-          dataWithTokens.push({
-            ...supabaseData,
-            tokens,
-          });
-        }
-      }
+    this.totalCost += Number(embeddingData.cost);
+    this.totalUsage += Number(embeddingData.usage.total_tokens);
 
-      return dataWithTokens;
-    } catch (error: any) {
-      this.log('createDataWithTokens - Error', error);
-      throw new Error(error.message || error);
-    }
+    const dataToInsert: DataInsert = {
+      tokens,
+      ai_table_name: aiTable,
+      data,
+      formatted_data,
+      embedding: embeddingData.data,
+    };
+
+    return dataToInsert;
   };
 
-  public addData = async (params: {
-    data: DataInsert['data'][];
-    ai_table_name: DataInsert['ai_table_name'];
-  }) => {
-    try {
-      // 1. Get table data
-      const {
-        data: supabaseData,
-        error: supabaseDataError,
-      }: { data: SupabaseData[] | null; error: string | null } =
-        await this.supabase.getData({
-          table_name: this.dataTableName,
-          ai_table_name: params.ai_table_name,
-        });
+  /**
+   * @description Groups data objects by their ai_table_name
+   * @param params Array of DataInsert objects
+   * @returns An array of grouped data objects
+   */
+  public groupDataObjectsByAiTableName(
+    params: DataInsert[],
+  ): GroupedDataObject[] {
+    return params.reduce((result, param) => {
+      const { ai_table_name } = param;
 
-      if (supabaseDataError) {
-        throw new Error(supabaseDataError);
+      // Find an existing group for the ai_table_name
+      let group = result.find((g) => g.ai_table_name === ai_table_name);
+
+      // If the group doesn't exist, create a new one
+      if (!group) {
+        group = { ai_table_name, data: [] };
+        result.push(group);
       }
 
-      // 2. Check if the table exists.
-      if (!supabaseData?.length) {
-        const table = await this.supabase.getData({
-          table_name: 'ai_db_table',
-          ai_table_name: params.ai_table_name,
-        });
+      // Add the current param to the group's data
+      group.data.push(param);
 
-        if (!table.data?.length) {
-          throw new Error(
-            `Table ${params.ai_table_name} does not exist. Create it first.`,
-          );
-        }
-      }
+      return result;
+    }, [] as GroupedDataObject[]);
+  }
 
-      // 3. Create the New Data in Supabase
-      const dbDataToInsert: DataInsert[] = params.data.map(
-        (d): DataInsert => ({
-          data: d,
-          ai_table_name: params.ai_table_name,
-        }),
-      );
-      const {
-        data: newSupabaseData,
-        error: newSuapbaseDataError,
-      }: { data: SupabaseData[]; error: PostgrestError | null } =
-        await this.supabase.insertData({
-          table_name: this.dataTableName,
-          data: dbDataToInsert,
-        });
-
-      if (newSuapbaseDataError) {
-        throw newSuapbaseDataError;
-      }
-
-      // 4. Create data with tokens
-      const supabaseDataWithTokens = await this.createDataWithTokens(
-        newSupabaseData,
-      );
-      const newSupabaseDataWithTokens = await this.createDataWithTokens(
-        supabaseData,
-      );
-      const allDataWithTokens: SupabaseDataWithTokens[] = [
-        ...supabaseDataWithTokens,
-        ...newSupabaseDataWithTokens,
-      ];
-
-      const totalTokens = allDataWithTokens.reduce(
-        (acc, curr) => acc + curr.tokens,
-        0,
-      );
-
-      const groupedData = groupDataByTokens({
-        data: allDataWithTokens,
-        tokensLimit: this.tokensLimit,
-      }) as SupabaseDataWithTokens[][];
-
-      return { groupedData, totalTokens };
-    } catch (error: any) {
-      this.log('addData - Error', error);
-      throw new Error(error.message || error);
-    }
-  };
-
-  private updateSupabaseData = async (dataUpdates: DataUpdatesParams[]) => {
-    try {
-      const updatePromises = dataUpdates.map(async (dataUpdate) => {
-        const { data: singleUpdatedData, error: updatedDataError } =
-          await this.supabase.updateData({
-            table_name: this.dataTableName,
-            data: dataUpdate.data,
-            id: dataUpdate.id,
-          });
-
-        if (updatedDataError) {
-          throw updatedDataError;
-        }
-
-        return singleUpdatedData?.[0] as SupabaseData;
+  /**
+   * @param data The data to extract the ai_table_name from
+   * @param createAITableIfNotExists If true, create the ai_table_name if it does not exist
+   * @description Checks if all the ai_table_name from the given data exists. If createAITableIfNotExists is true, create the ai_table_name if it does not exist.
+   * @returns `true` if all the ai_table_name exists. Otherwise, throw an error.
+   */
+  public checkAITableNames = async (params: DataManagerAddParams) => {
+    const { data, createAITableIfNotExists } = params;
+    this.log(
+      'add',
+      `Checking if all the ai_table_name from the given data exists...`,
+    );
+    const aiTableNames = [...new Set(data.map((d) => d.ai_table_name))];
+    const supabaseResponse: SupabaseGetDataResponse<SupabaseAIDBTable> =
+      await this.supabase.getData({
+        table_name: this.supabaseAITableName,
+        ai_table_name: aiTableNames,
       });
 
-      const updatedData = await Promise.all(updatePromises);
-
-      return updatedData;
-    } catch (error: any) {
-      this.log('updateSupabaseData - Error', error);
-      throw new Error(error.message || error);
-    }
-  };
-
-  private createDataChunkObjects = async (params: CreateDataChunkParams) => {
-    const { data, ai_table_name } = params;
-    // 1. Group data by tokens
-    const groupedData = groupDataByTokens({
-      data: data,
-      tokensLimit: this.tokensLimit,
-    }) as SupabaseDataWithTokens[][];
-
-    // 2. Create the data chunks
-    const newDataChunks: { data: DataChunkInsert; ids: string[] }[] = [];
-
-    for (let i = 0; i < groupedData.length; i++) {
-      const dataChunk = groupedData[i];
-      const summary = '';
-      const formattedData = dataChunk
-        .map((d) => getStringFromObject(d.data))
-        .join('\n\n');
-
-      newDataChunks.push({
-        data: {
-          formattedData,
-          summary,
-          ai_table_name,
-        },
-        ids: dataChunk.map((d) => d.id),
-      });
+    if (supabaseResponse.error) {
+      const errorMsg = `Error checking if all the ai_table_name from the given data exists.\n\n${supabaseResponse.error}`;
+      throw new Error(errorMsg);
     }
 
-    return newDataChunks;
-  };
+    const nonExistingAITableNames = aiTableNames
+      .filter(
+        (aiTableName) =>
+          !supabaseResponse.data?.find((t) => t.name === aiTableName),
+      )
+      .map((ai_table_name) => ({ ai_table_name }));
 
-  public createDataChunks = async (params: CreateDataChunkParams) => {
-    try {
-      // 1. Create data chunk objects
-      const newDataChunks = await this.createDataChunkObjects(params);
-      const response: CreatedDataChunk[] = [];
+    if (nonExistingAITableNames.length) {
+      // If createAITableIfNotExists is false, throw an error
+      if (!createAITableIfNotExists) {
+        throw new Error(
+          `The following AI table names do not exist: ${nonExistingAITableNames
+            .map((c) => c.ai_table_name)
+            .join(', ')}`,
+        );
+      }
 
-      // 3. Create the data chunks in Supabase
-      for (let i = 0; i < newDataChunks.length; i++) {
-        const newDataChunk = newDataChunks[i];
-        const {
-          data,
-          error: supabaseDataChunkError,
-        }: {
-          data: SupabaseDataChunk[];
-          error: PostgrestError | null;
-        } = await this.supabase.insertData({
-          table_name: this.dataChunkTableName,
-          data: [newDataChunk.data],
-        });
-
-        if (supabaseDataChunkError) {
-          throw supabaseDataChunkError;
-        }
-
-        // 4. Assign the data chunks ids to the data and update the data in Supabase
-        const supabaseDataChunk = data[0];
-
-        const dataChunkId = supabaseDataChunk.id;
-        const dataIds = newDataChunk.ids;
-        const dataUpdates: DataUpdatesParams[] = dataIds.map((id) => ({
-          data: { data_chunk: dataChunkId } as DataUpdate,
-          id,
+      // If createAITableIfNotExists is true, create the AI table names
+      this.log(
+        'add',
+        `Creating the following AI table names: ${nonExistingAITableNames
+          .map((c) => c.ai_table_name)
+          .join(', ')}`,
+      );
+      const newAITableInsertData: AIDBTableInsert[] =
+        nonExistingAITableNames.map((c) => ({
+          name: c.ai_table_name,
         }));
-        const updatedData: SupabaseData[] = await this.updateSupabaseData(
-          dataUpdates,
+
+      const newAITableSupabaseRequest = await this.supabase.insertData({
+        table_name: this.supabaseAITableName,
+        data: newAITableInsertData,
+      });
+
+      if (newAITableSupabaseRequest.error) {
+        const errorMsg =
+          newAITableSupabaseRequest.error.message ||
+          `Error creating the following AI table names: ${nonExistingAITableNames
+            .map((c) => c.ai_table_name)
+            .join(', ')}`;
+        throw new Error(errorMsg);
+      }
+    }
+
+    return true;
+  };
+
+  public assignDataChunks = async (params: { data: GroupedDataObject[] }) => {
+    const { data } = params;
+    // 1. Get the data chunks based on the ai_table_name
+    this.log(
+      'assignDataChunks',
+      `Getting data chunks based on the ai_table_name...`,
+    );
+    const aiTableNames = [...new Set(data.map((d) => d.ai_table_name))];
+    const supabaseDataChunks = await this.dataChunks.get({
+      ai_table_name: aiTableNames,
+      tokensAscending: true,
+    });
+
+    if (supabaseDataChunks.error) {
+      throw new Error(supabaseDataChunks.error);
+    }
+
+    const existingDataChunks: DataToInsertInDataChunk[] =
+      supabaseDataChunks.data?.map((d) => ({
+        data_chunk_id: d.id,
+        ai_table_name: d.ai_table_name,
+        data: [],
+        tokens: d.tokens,
+        formatted_data: d.formattedData,
+      })) || [];
+
+    data.forEach((d) => {
+      const { data: dataInserts, ai_table_name } = d;
+
+      dataInserts.forEach((dataInsert) => {
+        let chunk = existingDataChunks.find(
+          (chunk) =>
+            chunk.ai_table_name === dataInsert.ai_table_name &&
+            chunk.tokens + dataInsert.tokens <= this.dataChunksTokensLimit,
         );
 
-        response.push({ data: updatedData, dataChunk: supabaseDataChunk }); // Add all the data to the response
-      }
+        if (!chunk) {
+          // If no suitable chunk is found, create a new one.
+          // You'll have to determine how to set the data_chunk_id
+          const newDataChunk: DataToInsertInDataChunk = {
+            ai_table_name: dataInsert.ai_table_name,
+            data: [],
+            tokens: 0,
+          };
 
-      return response;
+          existingDataChunks.push(newDataChunk);
+          chunk = newDataChunk;
+        }
+        chunk.formatted_data =
+          (chunk.formatted_data || '') + '\n\n' + dataInsert.formatted_data;
+
+        // Add the dataInsert to the chunk
+        chunk.data.push(dataInsert);
+
+        // Update the total token count for this chunk. And Add 2 tokens for the new line
+        chunk.tokens += dataInsert.tokens + 2;
+      });
+    });
+
+    // 3. Create the data chunks
+
+    // 4. Assign the data objects to the data chunks
+    // 4.1
+
+    return existingDataChunks;
+  };
+
+  public add = async (params: DataManagerAddParams) => {
+    const { data } = params;
+
+    try {
+      // 1. Check if all the ai_table_name exists
+      await this.checkAITableNames(params);
+
+      // 2. Create Data Objects
+      const dataObjectsPromises = data.map(
+        async (d) => await this.createDataObject(d),
+      );
+
+      this.log('add', `Creating ${data.length} data objects...`);
+      const dataObjects = await Promise.all(dataObjectsPromises);
+      this.log(
+        'add',
+        `Created ${dataObjects.length} data objects.\n\nTotal Cost: ${this.totalCost}\nTotal Usage: ${this.totalUsage}`,
+      );
+
+      // 3. Group Data Objects by ai_table_name
+      const groupedDataObjects =
+        this.groupDataObjectsByAiTableName(dataObjects);
+
+      return groupedDataObjects;
     } catch (error: any) {
-      this.log('createDataChunk - Error', error);
+      this.log('add - Error', error.message || error, true);
       throw new Error(error.message || error);
     }
   };

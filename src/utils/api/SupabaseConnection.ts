@@ -6,16 +6,14 @@ import {
 } from '@supabase/supabase-js';
 import {
   DataChunkInsert,
-  DataChunkUpdate,
   DataInsert,
-  DataUpdate,
   AIDBTableInsert,
-  AIDBTableUpdate,
   BaseQueryParams,
   BuildQueryParams,
   SupabaseDBNames,
   SupabaseQuery,
   SupabaseUpdateDataFunctionParams,
+  SupabaseGetDataResponse,
 } from '@types';
 // Utils
 import { BaseClass } from '@utils/BaseClass';
@@ -44,7 +42,18 @@ export class SupabaseConnection extends BaseClass {
    * @returns The `SupabaseQuery` object
    */
   private buildQuery = (params: BuildQueryParams): SupabaseQuery => {
-    const { table_name, range, count, ai_table_name } = params;
+    const {
+      table_name,
+      range,
+      count,
+      ai_table_name,
+      maxTokens,
+      tokensAscending,
+    } = params;
+    const supabaseTablesWithTokens: SupabaseDBNames[] = [
+      'ai_db_data',
+      'ai_db_data_chunk',
+    ];
     let query: SupabaseQuery;
 
     if (count) {
@@ -57,15 +66,43 @@ export class SupabaseConnection extends BaseClass {
 
     if (ai_table_name) {
       // ai_table_name refers to the Supabase ai_db_table `name` column
+      let columnName = 'ai_table_name';
       if (table_name === 'ai_db_table') {
-        query = query.eq('name', ai_table_name);
+        columnName = 'name';
+      }
+
+      if (ai_table_name instanceof Array) {
+        query = query.in(columnName, ai_table_name);
       } else {
-        query = query.eq('ai_table_name', ai_table_name);
+        query = query.eq(columnName, ai_table_name);
       }
     }
 
     if (range && !count) {
       query.range(range[0], range[1]);
+    }
+
+    if (maxTokens && !supabaseTablesWithTokens.includes(table_name)) {
+      const errorMsg = `maxTokens is not supported for '${table_name}' table`;
+      this.log(`buildQuery - Error`, errorMsg, true);
+      throw new Error(errorMsg);
+    }
+
+    if (maxTokens) {
+      query.lte('tokens', maxTokens);
+    }
+
+    if (tokensAscending && !supabaseTablesWithTokens.includes(table_name)) {
+      const errorMsg = `tokensAscending is not supported for '${table_name}' table`;
+      this.log(`buildQuery - Error`, errorMsg, true);
+      throw new Error(errorMsg);
+    }
+
+    if (
+      tokensAscending !== undefined &&
+      supabaseTablesWithTokens.includes(table_name)
+    ) {
+      query.order('tokens', { ascending: tokensAscending });
     }
 
     return query;
@@ -122,10 +159,7 @@ export class SupabaseConnection extends BaseClass {
 
   public getData = async (
     params: BaseQueryParams,
-  ): Promise<{
-    data: any[] | null;
-    error: string | null;
-  }> => {
+  ): Promise<SupabaseGetDataResponse<any>> => {
     const { table_name, ai_table_name } = params;
 
     try {

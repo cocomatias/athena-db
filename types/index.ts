@@ -1,6 +1,7 @@
 // Vendors
 import { ChatCompletionCreateParams } from 'openai/resources/chat';
 import { PostgrestFilterBuilder } from '@supabase/postgrest-js';
+import OpenAI from 'openai';
 /*
  * ========= OpenAI =========
  */
@@ -78,6 +79,12 @@ export enum GPTModelName {
   GPT316k0613 = 'gpt-3.5-turbo-16k-0613',
 }
 
+export type OpenAIEmbeddingsResponse = {
+  cost: string;
+  usage: OpenAI.Embeddings.CreateEmbeddingResponse.Usage;
+  data: number[];
+};
+
 /*
  * ========= Streaming =========
  */
@@ -100,7 +107,9 @@ export type SupabaseQuery = PostgrestFilterBuilder<any, any, any[], unknown>;
 
 export type BaseQueryParams = {
   table_name: SupabaseDBNames; // The Supabase table name
-  ai_table_name?: string; // The AI DB table name
+  ai_table_name?: string | string[]; // The AI DB table name
+  maxTokens?: number;
+  tokensAscending?: boolean; // If true, the query will order the data by tokens ascending
 };
 
 export type BuildQueryParams = BaseQueryParams & {
@@ -118,6 +127,9 @@ export type SupabaseData = BaseSupabaseResponse & {
   data: Record<string, any>;
   ai_table_name: string;
   data_chunk: string | null; // Initially, this is null. After the data chunk is created, this will be the data chunk id
+  embedding: number[];
+  tokens: number;
+  formatted_data: string;
 };
 
 export type SupabaseAIDBTable = BaseSupabaseResponse & {
@@ -129,9 +141,15 @@ export type SupabaseDataChunk = BaseSupabaseResponse & {
   formattedData: string;
   summary: string;
   ai_table_name: string;
+  tokens: number;
 };
 
 export type SupabaseDBNames = 'ai_db_data' | 'ai_db_table' | 'ai_db_data_chunk';
+
+export type SupabaseGetDataResponse<T> = {
+  data: T[] | null;
+  error: string | null;
+};
 
 /*
  * ========= Supabase Connection Methods Parameters =========
@@ -161,11 +179,10 @@ export type DataUpdate = {
   data_chunk?: string;
 };
 
-export type DataInsert = {
-  data: Record<string, any>;
-  ai_table_name: string;
-  data_chunk?: string;
-};
+export type DataInsert = Omit<
+  SupabaseData,
+  'created_at' | 'updated_at' | 'data_chunk' | 'id'
+>;
 
 export type DataChunkUpdate = {
   formattedData?: string;
@@ -179,14 +196,16 @@ export type DataChunkInsert = {
   ai_table_name: string;
 };
 
-export type SupabaseDataWithTokens = SupabaseData & {
-  tokens: number;
-};
-
 /*
- * ========= Data chunk creator =========
+ * ========= Data Manager =========
  */
 export type AddDataParams = {
-  data: DataInsert['data'][];
-  ai_table_name: DataInsert['ai_table_name'];
+  data: Record<string, any>;
+  ai_table_name: string;
+  data_chunk?: string;
+};
+
+export type GroupedDataObject = {
+  ai_table_name: string;
+  data: DataInsert[];
 };

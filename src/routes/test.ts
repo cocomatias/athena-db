@@ -4,22 +4,20 @@ import express, { Request, Response, Router } from 'express';
 import BaseRoute from '@utils/api/BaseRoute';
 import { OpenAIChatCompletion } from '@utils/api/OpenAIChatCompletion';
 // Types
-import {
-  DataWithTokens,
-  DataInsert,
-  AddDataParams,
-  GPTModelName,
-} from '@types';
+import { DataWithTokens, DataInsert, GPTModelName } from '@types';
 import { groupDataByTokens } from '@utils/groupDataByTokens';
 import { SupabaseConnection } from '@utils/api/SupabaseConnection';
-import { DataManager } from '@utils/api/DataManager';
 import { getTokens } from '@utils/getTokens';
 import { getStringFromObject } from '@utils/getStringFromObject';
 import { niceLog } from '@utils/niceLog';
 import {
   mockDBDataWithoutTokens,
+  mockGroupedDataObjects,
   mockGroupedSupabaseAIDBData,
 } from '@utils/mockData';
+import { OpenAIEmbeddings } from '@utils/api/OpenAIEmbeddings';
+import { DataChunks } from '@utils/api/DataChunks';
+import { DataManager } from '@utils/api/DataManager';
 
 const router = Router();
 // Parse JSON bodies (as sent by API clients)
@@ -27,13 +25,7 @@ router.use(express.json());
 
 class TestRoute extends BaseRoute {
   execute = async () => {
-    const dbData: DataInsert[] = mockDBDataWithoutTokens.map((d) => ({
-      data: d,
-      ai_table_name: 'test1',
-    }));
-
     const sb = new SupabaseConnection(true);
-    const dm = new DataManager({ verbose: true });
 
     // Create Test AI Table
     // const createTable = await sb.insertData({
@@ -92,8 +84,54 @@ class TestRoute extends BaseRoute {
   };
 }
 
+class TestRoute2 extends BaseRoute {
+  execute = async () => {
+    const dm = new DataManager({ verbose: true });
+    const dataTest = [
+      {
+        ai_table_name: 'test',
+        data: mockDBDataWithoutTokens[0],
+      },
+      {
+        ai_table_name: 'test',
+        data: mockDBDataWithoutTokens[1],
+      },
+      {
+        ai_table_name: 'test1',
+        data: mockDBDataWithoutTokens[2],
+      },
+      {
+        ai_table_name: 'test2',
+        data: mockDBDataWithoutTokens[3],
+      },
+      {
+        ai_table_name: 'test2',
+        data: mockDBDataWithoutTokens[4],
+      },
+      {
+        ai_table_name: 'test4',
+        data: mockDBDataWithoutTokens[5],
+      },
+    ];
+    const test = await dm.assignDataChunks({
+      data: mockGroupedDataObjects,
+    });
+    // const test = await new DataChunks({ verbose: true }).get({
+    //   // table_name: 'ai_db_table',
+    //   ai_table_name: ['test', 'test2', 'test4', 'test5'],
+    //   tokensAscending: true,
+    // });
+
+    this.returnResponse(test);
+  };
+}
+
 router.post('/test', (req: Request, res: Response) =>
   new TestRoute({ req, res, verbose: true, allowStreaming: false }).handle(),
+);
+
+router.post('/test2', (req: Request, res: Response) =>
+  new TestRoute2({ req, res, verbose: true, allowStreaming: false }).handle(),
 );
 
 export default router;
