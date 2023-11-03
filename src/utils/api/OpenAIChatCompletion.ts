@@ -3,6 +3,7 @@ import OpenAI from 'openai';
 import { ChatCompletionMessage } from 'openai/resources/chat';
 // Types
 import {
+  DefaultClassParams,
   DynamicFunction,
   GPTModelName,
   OpenAIChatCompletionResponse as Response,
@@ -11,10 +12,9 @@ import {
 import { getModelsTokenCost } from '@utils/getModelsTokenCost';
 import { BaseClass } from '@utils/BaseClass';
 
-interface OpenAIChatCompletionProps {
+interface OpenAIChatCompletionProps extends DefaultClassParams {
   functions?: DynamicFunction[];
   messages: ChatCompletionMessage[];
-  verbose?: boolean;
   executeFunction?: boolean;
   model?: GPTModelName;
   temperature?: number;
@@ -61,7 +61,7 @@ export class OpenAIChatCompletion extends BaseClass {
     }
   }
 
-  public call = async (): Promise<Response> => {
+  public call = async (): Promise<Response<any>> => {
     try {
       // Generate a cache key based on input parameters
       const cacheKey = `${this.model}-${JSON.stringify(
@@ -77,7 +77,10 @@ export class OpenAIChatCompletion extends BaseClass {
       const usageData = {
         prompt: completition.usage?.prompt_tokens || 0,
         completion: completition.usage?.completion_tokens || 0,
+        total: 0,
       };
+      usageData.total = usageData.prompt + usageData.completion;
+
       const tokenCost = getModelsTokenCost(this.model);
       const costs = {
         prompt: tokenCost.prompt * usageData.prompt,

@@ -49,6 +49,7 @@ export class SupabaseConnection extends BaseClass {
       ai_table_name,
       maxTokens,
       tokensAscending,
+      ids,
     } = params;
     const supabaseTablesWithTokens: SupabaseDBNames[] = [
       'ai_db_data',
@@ -103,6 +104,10 @@ export class SupabaseConnection extends BaseClass {
       supabaseTablesWithTokens.includes(table_name)
     ) {
       query.order('tokens', { ascending: tokensAscending });
+    }
+
+    if (ids) {
+      query.in('id', ids);
     }
 
     return query;
@@ -192,6 +197,16 @@ export class SupabaseConnection extends BaseClass {
       const results = await this.executeQueries({
         table_name: table_name,
         queries: queries,
+      });
+
+      // Parse the embedding strings to number arrays
+      results.data?.forEach((record) => {
+        for (const key in record) {
+          const value = record[key];
+          if (key.includes('embedding') && typeof value === 'string') {
+            record[key] = JSON.parse(value);
+          }
+        }
       });
 
       return results;

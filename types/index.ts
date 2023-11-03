@@ -1,7 +1,19 @@
 // Vendors
-import { ChatCompletionCreateParams } from 'openai/resources/chat';
+import {
+  ChatCompletionCreateParams,
+  ChatCompletionMessage,
+  ChatCompletionRole,
+} from 'openai/resources/chat';
 import { PostgrestFilterBuilder } from '@supabase/postgrest-js';
 import OpenAI from 'openai';
+
+/*
+ * ========= General =========
+ */
+export type DefaultClassParams = {
+  verbose?: boolean;
+};
+
 /*
  * ========= OpenAI =========
  */
@@ -52,11 +64,12 @@ export interface DynamicFunction extends ChatCompletionCreateParams.Function {
   call: (args?: any) => void;
 }
 
-export interface OpenAIChatCompletionResponse {
-  data: any;
+export interface OpenAIChatCompletionResponse<T> {
+  data: T;
   usageData: {
     prompt: number;
     completion: number;
+    total: number;
   };
   costs: {
     prompt: number;
@@ -85,6 +98,11 @@ export type OpenAIEmbeddingsResponse = {
   data: number[];
 };
 
+export type DefaultGPTCompletionResponse = {
+  content: string;
+  role: ChatCompletionRole;
+};
+
 /*
  * ========= Streaming =========
  */
@@ -110,6 +128,7 @@ export type BaseQueryParams = {
   ai_table_name?: string | string[]; // The AI DB table name
   maxTokens?: number;
   tokensAscending?: boolean; // If true, the query will order the data by tokens ascending
+  ids?: string[]; // The uuids to get the data from
 };
 
 export type BuildQueryParams = BaseQueryParams & {
@@ -123,26 +142,17 @@ export type BaseSupabaseResponse = {
   id: string;
 };
 
-export type SupabaseData = BaseSupabaseResponse & {
-  data: Record<string, any>;
-  ai_table_name: string;
-  data_chunk: string | null; // Initially, this is null. After the data chunk is created, this will be the data chunk id
-  embedding: number[];
-  tokens: number;
-  formatted_data: string;
-};
+export type SupabaseData = BaseSupabaseResponse &
+  DataInsert & {
+    data_chunk?: string | null; // Initially, this is null (or undefined). After the data chunk is created, this will be the data chunk id
+  };
 
 export type SupabaseAIDBTable = BaseSupabaseResponse & {
   name: string;
   description: string;
 };
 
-export type SupabaseDataChunk = BaseSupabaseResponse & {
-  formattedData: string;
-  summary: string;
-  ai_table_name: string;
-  tokens: number;
-};
+export type SupabaseDataChunk = BaseSupabaseResponse & DataChunkInsert;
 
 export type SupabaseDBNames = 'ai_db_data' | 'ai_db_table' | 'ai_db_data_chunk';
 
@@ -174,15 +184,18 @@ export type AIDBTableInsert = {
 };
 
 export type DataUpdate = {
-  data?: Record<string, any>;
+  data?: DataInsert['data'];
   ai_table_name?: string;
   data_chunk?: string;
 };
 
-export type DataInsert = Omit<
-  SupabaseData,
-  'created_at' | 'updated_at' | 'data_chunk' | 'id'
->;
+export type DataInsert = {
+  data: Record<string, any> | string;
+  ai_table_name: string;
+  embedding: number[];
+  tokens: number;
+  formatted_data: string;
+};
 
 export type DataChunkUpdate = {
   formattedData?: string;
@@ -191,21 +204,32 @@ export type DataChunkUpdate = {
 };
 
 export type DataChunkInsert = {
-  formattedData: string;
+  formatted_data: string;
   summary: string;
   ai_table_name: string;
+  tokens: number;
+  summary_embedding: number[];
 };
 
 /*
  * ========= Data Manager =========
  */
 export type AddDataParams = {
-  data: Record<string, any>;
+  data: DataInsert['data'];
   ai_table_name: string;
-  data_chunk?: string;
+  data_chunk?: string; // When the data is new, this will be undefined
 };
 
 export type GroupedDataObject = {
   ai_table_name: string;
   data: DataInsert[];
+};
+
+export type AssignedDataChunk = {
+  data_chunk_id?: string; // If the data chunk is new, this will be undefined
+  summary_embedding?: number[]; // If the data chunk is new, this will be undefined
+  formatted_data: string;
+  ai_table_name: string;
+  data: DataInsert[]; // Representing the new data to be inserted in the data chunk
+  tokens: number;
 };

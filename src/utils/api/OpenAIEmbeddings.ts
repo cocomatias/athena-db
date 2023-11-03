@@ -3,11 +3,10 @@ import { Decimal } from 'decimal.js';
 import OpenAI from 'openai';
 // Utils
 import { BaseClass } from '@utils/BaseClass';
-import { OpenAIEmbeddingsResponse } from '@types';
+import { DefaultClassParams, OpenAIEmbeddingsResponse } from '@types';
 
-type OpenAIEmbeddingsParams = {
+type OpenAIEmbeddingsParams = DefaultClassParams & {
   text: string;
-  verbose?: boolean;
 };
 
 export class OpenAIEmbeddings extends BaseClass {
@@ -15,6 +14,7 @@ export class OpenAIEmbeddings extends BaseClass {
   private model: string = 'text-embedding-ada-002';
   private text: string;
   private costPerToken = new Decimal('0.0001').dividedBy(1000);
+  readonly dimensions = 1536;
 
   constructor(params: OpenAIEmbeddingsParams) {
     super(params);

@@ -1,31 +1,17 @@
 import {
   AIDBTableInsert,
   AddDataParams,
-  DataInsert,
   SupabaseAIDBTable,
   SupabaseDBNames,
   SupabaseGetDataResponse,
   GroupedDataObject,
-  SupabaseDataChunk,
+  DefaultClassParams,
+  AssignedDataChunk,
 } from '@types';
 import { BaseClass } from '@utils/BaseClass';
 import { SupabaseConnection } from './SupabaseConnection';
 import { DataChunks } from './DataChunks';
-import { getTokens } from '@utils/getTokens';
-import { getStringFromObject } from '@utils/getStringFromObject';
-import { OpenAIEmbeddings } from './OpenAIEmbeddings';
-
-type DataManagerParams = {
-  verbose?: boolean;
-};
-
-type DataToInsertInDataChunk = {
-  data_chunk_id?: string; // If the data chunk is new, this will be undefined
-  formatted_data?: string; // If the data chunk is new, this will be undefined
-  ai_table_name: string;
-  data: DataInsert[];
-  tokens: number;
-};
+import { Data } from './Data';
 
 type DataManagerAddParams = {
   data: AddDataParams[];
@@ -36,67 +22,13 @@ export class DataManager extends BaseClass {
   private supabase = new SupabaseConnection(this.verbose);
   private dataChunks = new DataChunks({ verbose: this.verbose });
   private dataChunksTokensLimit = this.dataChunks.tokensLimit;
+  private data = new Data({ verbose: this.verbose });
   private supabaseAITableName: SupabaseDBNames = 'ai_db_table';
   private totalUsage = 0;
   private totalCost = 0;
 
-  constructor(params: DataManagerParams) {
+  constructor(params: DefaultClassParams) {
     super(params);
-  }
-
-  /**
-   * @description Creates a data object with the tokens, embedding, and formatted_data
-   * @param data The data to create the data object from
-   * @returns The data object
-   */
-  public createDataObject = async (data: AddDataParams) => {
-    const formatted_data = getStringFromObject(data.data);
-    const aiTable = data.ai_table_name;
-    const tokens = await getTokens(formatted_data);
-    const embeddingData = await new OpenAIEmbeddings({
-      verbose: this.verbose,
-      text: formatted_data,
-    }).call();
-
-    this.totalCost += Number(embeddingData.cost);
-    this.totalUsage += Number(embeddingData.usage.total_tokens);
-
-    const dataToInsert: DataInsert = {
-      tokens,
-      ai_table_name: aiTable,
-      data,
-      formatted_data,
-      embedding: embeddingData.data,
-    };
-
-    return dataToInsert;
-  };
-
-  /**
-   * @description Groups data objects by their ai_table_name
-   * @param params Array of DataInsert objects
-   * @returns An array of grouped data objects
-   */
-  public groupDataObjectsByAiTableName(
-    params: DataInsert[],
-  ): GroupedDataObject[] {
-    return params.reduce((result, param) => {
-      const { ai_table_name } = param;
-
-      // Find an existing group for the ai_table_name
-      let group = result.find((g) => g.ai_table_name === ai_table_name);
-
-      // If the group doesn't exist, create a new one
-      if (!group) {
-        group = { ai_table_name, data: [] };
-        result.push(group);
-      }
-
-      // Add the current param to the group's data
-      group.data.push(param);
-
-      return result;
-    }, [] as GroupedDataObject[]);
   }
 
   /**
@@ -187,17 +119,18 @@ export class DataManager extends BaseClass {
       throw new Error(supabaseDataChunks.error);
     }
 
-    const existingDataChunks: DataToInsertInDataChunk[] =
+    // 2. Assign the data to the data chunks
+    const existingDataChunks: AssignedDataChunk[] =
       supabaseDataChunks.data?.map((d) => ({
         data_chunk_id: d.id,
         ai_table_name: d.ai_table_name,
         data: [],
         tokens: d.tokens,
-        formatted_data: d.formattedData,
+        formatted_data: d.formatted_data,
       })) || [];
 
     data.forEach((d) => {
-      const { data: dataInserts, ai_table_name } = d;
+      const { data: dataInserts } = d;
 
       dataInserts.forEach((dataInsert) => {
         let chunk = existingDataChunks.find(
@@ -206,20 +139,23 @@ export class DataManager extends BaseClass {
             chunk.tokens + dataInsert.tokens <= this.dataChunksTokensLimit,
         );
 
+        // If no suitable chunk is found, create a new one without chunk_id and formatted_data, representing a new data chunk
         if (!chunk) {
-          // If no suitable chunk is found, create a new one.
-          // You'll have to determine how to set the data_chunk_id
-          const newDataChunk: DataToInsertInDataChunk = {
+          const newDataChunk: AssignedDataChunk = {
             ai_table_name: dataInsert.ai_table_name,
             data: [],
             tokens: 0,
+            formatted_data: '',
           };
 
           existingDataChunks.push(newDataChunk);
           chunk = newDataChunk;
         }
-        chunk.formatted_data =
-          (chunk.formatted_data || '') + '\n\n' + dataInsert.formatted_data;
+
+        // Add the formatted_data to the chunk
+        chunk.formatted_data = `${chunk.formatted_data || ''}${
+          chunk.formatted_data ? '\n\n' : ''
+        }${dataInsert.formatted_data}`;
 
         // Add the dataInsert to the chunk
         chunk.data.push(dataInsert);
@@ -229,14 +165,36 @@ export class DataManager extends BaseClass {
       });
     });
 
-    // 3. Create the data chunks
-
-    // 4. Assign the data objects to the data chunks
-    // 4.1
-
-    return existingDataChunks;
+    return existingDataChunks.filter((d) => d.data.length);
   };
 
+  public processAssignedDataChunks = async (params: {
+    data: AssignedDataChunk[];
+  }) => {
+    const { data } = params;
+    try {
+      // 1. Filter existing and not existing data chunks
+      const dataChunksUpdates = data.filter((d) => d.data_chunk_id);
+      const newDataChunks = data.filter((d) => !d.data_chunk_id);
+
+      // 2. Create new data chunks
+
+      // return dataChunks;
+    } catch (error: any) {
+      this.log(
+        'processAssignedDataChunks - Error',
+        error.message || error,
+        true,
+      );
+      throw new Error(error.message || error);
+    }
+  };
+
+  /**
+   * @param data The data to add and create data chunks from
+   * @param createAITableIfNotExists If true, create the ai_table_name if it does not exist
+   * @returns The data chunks
+   */
   public add = async (params: DataManagerAddParams) => {
     const { data } = params;
 
@@ -245,9 +203,12 @@ export class DataManager extends BaseClass {
       await this.checkAITableNames(params);
 
       // 2. Create Data Objects
-      const dataObjectsPromises = data.map(
-        async (d) => await this.createDataObject(d),
-      );
+      const dataObjectsPromises = data.map(async (d) => {
+        const { data, usage, cost } = await this.data.createDataObject(d);
+        this.totalCost += cost;
+        this.totalUsage += usage;
+        return data;
+      });
 
       this.log('add', `Creating ${data.length} data objects...`);
       const dataObjects = await Promise.all(dataObjectsPromises);
@@ -258,9 +219,14 @@ export class DataManager extends BaseClass {
 
       // 3. Group Data Objects by ai_table_name
       const groupedDataObjects =
-        this.groupDataObjectsByAiTableName(dataObjects);
+        this.data.groupDataObjectsByAiTableName(dataObjects);
 
-      return groupedDataObjects;
+      // 4. Assign Data Chunks
+      const dataChunks = await this.assignDataChunks({
+        data: groupedDataObjects,
+      });
+
+      return dataChunks;
     } catch (error: any) {
       this.log('add - Error', error.message || error, true);
       throw new Error(error.message || error);

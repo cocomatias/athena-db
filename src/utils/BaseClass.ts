@@ -1,10 +1,10 @@
-import { SendMessageFunction } from '@types';
+import { DefaultClassParams, SendMessageFunction } from '@types';
 import { niceLog } from './niceLog';
 
-type BaseClassParams = SendMessageFunction & {
-  verbose?: boolean;
-  titleExtra?: any;
-};
+type BaseClassParams = DefaultClassParams &
+  SendMessageFunction & {
+    titleExtra?: any;
+  };
 
 /**
  * Represents a class to manage logging.

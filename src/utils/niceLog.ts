@@ -22,11 +22,14 @@ export const niceLog = (
     )}\n${Colors.Reset}`,
   );
 
+  message =
+    typeof message !== 'object' || message instanceof Error
+      ? message
+      : JSON.stringify(message, null, 2) || message;
+
   // Check if the message is an Error
   if (message instanceof Error || error) {
     console.log(`${Colors.FgRed}${message.stack || message}${Colors.Reset}`);
-  } else if (typeof message === 'object') {
-    console.log(JSON.stringify(message, null, 2));
   } else {
     console.log(message);
   }

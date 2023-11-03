@@ -11,6 +11,8 @@ import { getTokens } from '@utils/getTokens';
 import { getStringFromObject } from '@utils/getStringFromObject';
 import { niceLog } from '@utils/niceLog';
 import {
+  mockAssignedDataChunk,
+  mockDBBigDataWithoutTokens,
   mockDBDataWithoutTokens,
   mockGroupedDataObjects,
   mockGroupedSupabaseAIDBData,
@@ -53,11 +55,11 @@ class TestRoute extends BaseRoute {
     // this.returnResponse(supabaseDBData);
 
     // Test Get DataChunks
-    // const supabaseDataChunks = await sb.getData({
-    //   table_name: 'ai_db_data_chunk',
-    //   // ai_table_name: 'test1',
-    // });
-    // this.returnResponse(supabaseDataChunks);
+    const supabaseDataChunks = await sb.getData({
+      table_name: 'ai_db_data_chunk',
+      ai_table_name: 'test',
+    });
+    this.returnResponse(supabaseDataChunks);
 
     // Test Insert DB Data
     // const insertedData = await sb.insertData({
@@ -113,13 +115,27 @@ class TestRoute2 extends BaseRoute {
         data: mockDBDataWithoutTokens[5],
       },
     ];
-    const test = await dm.assignDataChunks({
-      data: mockGroupedDataObjects,
+
+    const bigDataTest = [
+      {
+        ai_table_name: 'test',
+        data: mockDBBigDataWithoutTokens[0],
+      },
+      {
+        ai_table_name: 'test',
+        data: mockDBBigDataWithoutTokens[1],
+      },
+      {
+        ai_table_name: 'test',
+        data: mockDBBigDataWithoutTokens[2],
+      },
+    ];
+    const test = await new DataManager({ verbose: true }).add({
+      data: bigDataTest,
     });
-    // const test = await new DataChunks({ verbose: true }).get({
-    //   // table_name: 'ai_db_table',
-    //   ai_table_name: ['test', 'test2', 'test4', 'test5'],
-    //   tokensAscending: true,
+
+    // const test = await new DataChunks({ verbose: true }).create({
+    //   data: mockAssignedDataChunk,
     // });
 
     this.returnResponse(test);
