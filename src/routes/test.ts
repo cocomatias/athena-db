@@ -5,21 +5,22 @@ import BaseRoute from '@utils/api/BaseRoute';
 import { OpenAIChatCompletion } from '@utils/api/OpenAIChatCompletion';
 // Types
 import { DataWithTokens, DataInsert, GPTModelName } from '@types';
-import { groupDataByTokens } from '@utils/groupDataByTokens';
+// import { groupDataByTokens } from '@utils/groupDataByTokens';
 import { SupabaseConnection } from '@utils/api/SupabaseConnection';
-import { getTokens } from '@utils/getTokens';
-import { getStringFromObject } from '@utils/getStringFromObject';
-import { niceLog } from '@utils/niceLog';
+// import { getTokens } from '@utils/getTokens';
+// import { getStringFromObject } from '@utils/getStringFromObject';
+// import { niceLog } from '@utils/niceLog';
 import {
-  mockAssignedDataChunk,
+  // mockAssignedDataChunk,
   mockDBBigDataWithoutTokens,
   mockDBDataWithoutTokens,
-  mockGroupedDataObjects,
-  mockGroupedSupabaseAIDBData,
+  // mockGroupedDataObjects,
+  // mockGroupedSupabaseAIDBData,
 } from '@utils/mockData';
-import { OpenAIEmbeddings } from '@utils/api/OpenAIEmbeddings';
+// import { OpenAIEmbeddings } from '@utils/api/OpenAIEmbeddings';
 import { DataChunks } from '@utils/api/DataChunks';
 import { DataManager } from '@utils/api/DataManager';
+// import { Data } from '@utils/api/Data';
 
 const router = Router();
 // Parse JSON bodies (as sent by API clients)
@@ -27,7 +28,7 @@ router.use(express.json());
 
 class TestRoute extends BaseRoute {
   execute = async () => {
-    const sb = new SupabaseConnection(true);
+    const sb = SupabaseConnection.getInstance(true);
 
     // Create Test AI Table
     // const createTable = await sb.insertData({
@@ -133,10 +134,14 @@ class TestRoute2 extends BaseRoute {
     const test = await new DataManager({ verbose: true }).add({
       data: bigDataTest,
     });
-
-    // const test = await new DataChunks({ verbose: true }).create({
-    //   data: mockAssignedDataChunk,
+    // const test = await new Data({ verbose: true }).splitData({
+    //   formatted_data: mockDBBigDataWithoutTokens[0],
+    //   tokens: 11999,
     // });
+
+    // const test = {
+    //   tokensLimit: await new DataChunks({ verbose: true }).getTokensLimit(),
+    // };
 
     this.returnResponse(test);
   };

@@ -1,6 +1,11 @@
 // Vendors
 import OpenAI from 'openai';
-import { ChatCompletionMessage } from 'openai/resources/chat';
+import {
+  ChatCompletionFunctionMessageParam,
+  ChatCompletionMessage,
+  ChatCompletionMessageParam,
+  ChatCompletionMessageToolCall,
+} from 'openai/resources/chat';
 // Types
 import {
   DefaultClassParams,
@@ -14,7 +19,7 @@ import { BaseClass } from '@utils/BaseClass';
 
 interface OpenAIChatCompletionProps extends DefaultClassParams {
   functions?: DynamicFunction[];
-  messages: ChatCompletionMessage[];
+  messages: ChatCompletionMessageParam[];
   executeFunction?: boolean;
   model?: GPTModelName;
   temperature?: number;
@@ -32,7 +37,7 @@ export class OpenAIChatCompletion extends BaseClass {
   private model: GPTModelName = GPTModelName.GPT30613;
   private apiKey = process.env.OPENAI_API_KEY;
   private functions?: DynamicFunction[];
-  private messages: ChatCompletionMessage[] = [];
+  private messages: ChatCompletionMessageParam[] = [];
   private executeFunction: boolean;
   private temperature: number = 0;
 
@@ -90,15 +95,18 @@ export class OpenAIChatCompletion extends BaseClass {
       costs.total = costs.prompt + costs.completion;
 
       const response = completition.choices[0].message;
-      if (response && response.function_call) {
+      if (response && response.tool_calls) {
         if (this.executeFunction) {
           this.log('Function Call - Executing function', response);
-          const funcReturn = await this._executeFunction(
-            response.function_call,
+          const funcReturns = await Promise.all(
+            response.tool_calls.map(async (func) => {
+              const funcReturn = await this._executeFunction(func);
+              return funcReturn;
+            }),
           );
-          if (funcReturn !== undefined) {
-            this.log('Function Call - What the function returned', funcReturn);
-            return { data: funcReturn, usageData, costs };
+          if (!funcReturns.length) {
+            this.log('Function Call - What the function returned', funcReturns);
+            return { data: funcReturns, usageData, costs };
           }
         }
       }
@@ -113,18 +121,18 @@ export class OpenAIChatCompletion extends BaseClass {
   };
 
   private _executeFunction = async (
-    _function: ChatCompletionMessage.FunctionCall,
+    _function: ChatCompletionMessageToolCall,
   ): Promise<any> => {
     try {
-      const funcArgs = _function?.arguments;
-      const func = this.getFunction(_function);
+      const funcArgs = _function;
+      const func = this.getFunction(_function.function);
       if (func && func?.call) {
         let parsedFuncArgs: any;
         if (funcArgs) {
           try {
-            parsedFuncArgs = JSON.parse(funcArgs);
+            parsedFuncArgs = JSON.parse(funcArgs.function.arguments);
           } catch (err) {
-            parsedFuncArgs = this.jsonParseFixer(funcArgs);
+            parsedFuncArgs = this.jsonParseFixer(funcArgs.function.arguments);
           }
         }
         parsedFuncArgs = { ...parsedFuncArgs, verbose: this.verbose };
@@ -136,14 +144,14 @@ export class OpenAIChatCompletion extends BaseClass {
     } catch (err: any) {
       throw new FunctionCallError(
         `Error occurred while executing the function ${
-          _function.name || ''
+          _function.function.name || ''
         }: ` + err.message || err,
       );
     }
   };
 
   private getFunction = (
-    _function: ChatCompletionMessage.FunctionCall,
+    _function: ChatCompletionMessageToolCall.Function,
   ): DynamicFunction => {
     const func = this.functions?.find((func) => func.name === _function?.name);
     if (func) {

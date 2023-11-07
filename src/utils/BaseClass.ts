@@ -1,5 +1,6 @@
 import { DefaultClassParams, SendMessageFunction } from '@types';
 import { niceLog } from './niceLog';
+import { SupabaseConnection } from './api/SupabaseConnection';
 
 type BaseClassParams = DefaultClassParams &
   SendMessageFunction & {
@@ -17,6 +18,16 @@ export class BaseClass {
   protected today = new Date().toLocaleString();
   protected sendMessageFunction: SendMessageFunction['sendMessageFunction'];
   private className = this.constructor.name; // Dynamically get the class name
+  // Make it a private nullable field.
+  private _supabase?: SupabaseConnection;
+
+  // Lazy getter method.
+  protected get supabase(): SupabaseConnection {
+    if (!this._supabase) {
+      this._supabase = SupabaseConnection.getInstance(this.verbose);
+    }
+    return this._supabase;
+  }
 
   constructor(params: BaseClassParams) {
     this.verbose = params.verbose;

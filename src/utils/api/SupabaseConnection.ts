@@ -23,13 +23,15 @@ import { generateRanges } from '@utils/generateRanges';
 export class SupabaseConnection extends BaseClass {
   private supabaseUrl: string;
   private supabaseKey: string;
-  public supabase: SupabaseClient<any, 'public', any>;
+  public supabaseInstace: SupabaseClient<any, 'public', any>;
+  // Singleton instance
+  private static instance: SupabaseConnection;
 
-  constructor(verbose?: boolean) {
+  private constructor(verbose?: boolean) {
     super({ verbose });
     this.supabaseUrl = process.env.SUPABASE_URL || '';
     this.supabaseKey = process.env.SUPABASE_KEY || '';
-    this.supabase = createClient(this.supabaseUrl, this.supabaseKey, {
+    this.supabaseInstace = createClient(this.supabaseUrl, this.supabaseKey, {
       auth: {
         persistSession: false,
       },
@@ -50,6 +52,7 @@ export class SupabaseConnection extends BaseClass {
       maxTokens,
       tokensAscending,
       ids,
+      data_chunk_id,
     } = params;
     const supabaseTablesWithTokens: SupabaseDBNames[] = [
       'ai_db_data',
@@ -58,11 +61,11 @@ export class SupabaseConnection extends BaseClass {
     let query: SupabaseQuery;
 
     if (count) {
-      query = this.supabase
+      query = this.supabaseInstace
         .from(table_name)
         .select('*', { count: 'exact', head: true });
     } else {
-      query = this.supabase.from(table_name).select('*');
+      query = this.supabaseInstace.from(table_name).select('*');
     }
 
     if (ai_table_name) {
@@ -104,6 +107,16 @@ export class SupabaseConnection extends BaseClass {
       supabaseTablesWithTokens.includes(table_name)
     ) {
       query.order('tokens', { ascending: tokensAscending });
+    }
+
+    if (data_chunk_id) {
+      if (table_name !== 'ai_db_data') {
+        throw new Error(
+          `data_chunk_id is not supported for '${table_name}' table`,
+        );
+      }
+
+      query.eq('data_chunk', data_chunk_id);
     }
 
     if (ids) {
@@ -165,7 +178,7 @@ export class SupabaseConnection extends BaseClass {
   public getData = async (
     params: BaseQueryParams,
   ): Promise<SupabaseGetDataResponse<any>> => {
-    const { table_name, ai_table_name } = params;
+    const { table_name, ai_table_name, data_chunk_id } = params;
 
     try {
       // 1. Count the total number of records
@@ -267,7 +280,7 @@ export class SupabaseConnection extends BaseClass {
       data: responseData,
       error,
       statusText,
-    } = await this.supabase.from(table_name).insert(insertData).select();
+    } = await this.supabaseInstace.from(table_name).insert(insertData).select();
 
     response = responseData;
     if (error) {
@@ -285,18 +298,12 @@ export class SupabaseConnection extends BaseClass {
    * @returns The Supabase response
    */
   public updateData = async (params: SupabaseUpdateDataFunctionParams) => {
-    const { table_name, id } = params;
+    const { table_name, data } = params;
     let response: any[] | null | string;
     const updated_at = new Date();
-    const data = { ...params.data, updated_at };
+    const dataToInsert = data.map((d) => ({ ...d, updated_at }));
 
-    const query = this.supabase.from(table_name).update(data);
-
-    if (table_name === 'ai_db_table') {
-      query.eq('name', id);
-    } else {
-      query.eq('id', id);
-    }
+    const query = this.supabaseInstace.from(table_name).upsert(dataToInsert);
 
     const { data: responseData, error, statusText } = await query.select();
 
@@ -321,7 +328,7 @@ export class SupabaseConnection extends BaseClass {
     const { table_name, id } = params;
     let response: string | null;
 
-    const query = this.supabase.from(table_name).delete();
+    const query = this.supabaseInstace.from(table_name).delete();
 
     if (table_name === 'ai_db_table') {
       query.in('name', id);
@@ -339,4 +346,13 @@ export class SupabaseConnection extends BaseClass {
 
     return { data: response, error: error?.message || null };
   };
+
+  // The static method that controls access to the singleton instance.
+  public static getInstance(verbose?: boolean): SupabaseConnection {
+    if (!SupabaseConnection.instance) {
+      SupabaseConnection.instance = new SupabaseConnection(verbose);
+    }
+
+    return SupabaseConnection.instance;
+  }
 }

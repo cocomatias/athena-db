@@ -3,6 +3,7 @@ import { SupabaseConnection } from './SupabaseConnection';
 import {
   AssignedDataChunk,
   DataChunkInsert,
+  DataChunkUpdate,
   DefaultClassParams,
   DefaultGPTCompletionResponse,
   GPTModelName,
@@ -13,9 +14,9 @@ import {
 } from '@types';
 import { getTokensLimit } from '@utils/getTokensLimit';
 import { getTokens } from '@utils/getTokens';
-import { ChatCompletionMessage } from 'openai/resources';
+import { ChatCompletionMessageParam } from 'openai/resources';
 import { OpenAIChatCompletion } from './OpenAIChatCompletion';
-import { OpenAIEmbeddings } from './OpenAIEmbeddings';
+import { Data } from './Data';
 
 type DataChunkGetParams = {
   ai_table_name?: string | string[];
@@ -28,20 +29,75 @@ type DataChunksCreateParams = {
   data: AssignedDataChunk;
 };
 
-type DataChunksUpdateParams = {
-  data: AssignedDataChunk;
-};
-
 export class DataChunks extends BaseClass {
-  private supabase = new SupabaseConnection(this.verbose);
   private supabaseDBName: SupabaseDBNames = 'ai_db_data_chunk';
-  public tokensLimit = 14900; // The tokens limit for the data inside the data chunk
   private summarizerModel: GPTModelName = GPTModelName.GPT316k;
+  private _data?: Data;
   private summarierTokensLimit = getTokensLimit(this.summarizerModel); // The tokens limit for the summarizer model
+  private totalCost = 0;
+  private totalUsage = 0;
+
+  // Lazy initializer for Data
+  private get data(): Data {
+    if (!this._data) {
+      this._data = new Data({ verbose: this.verbose });
+    }
+    return this._data;
+  }
 
   constructor(params: DefaultClassParams) {
     super(params);
   }
+
+  readonly getTokensLimit = async () => {
+    const summaryMessages = await this.getSummaryMessage('');
+    const tokensLimit = this.summarierTokensLimit - summaryMessages.tokens;
+
+    return tokensLimit;
+  };
+
+  private getSummaryMessage = async (data: string) => {
+    // 1. Summarization Instructions
+    const summarizationInstructions =
+      'Instructions: Summarize the given data concisely, focusing on the key points and information. ' +
+      'Ensure the summary is clear and informative, to assist a secondary GPT instance in understanding the data context.\n';
+
+    // 2. Output Format
+    const outputFormatInstructions =
+      'Output Format: Provide the summary in a structured format, with a title and bullet points capturing the key information.\n';
+
+    // Combining all parts to form the complete prompt
+    const systemPrompt = summarizationInstructions + outputFormatInstructions;
+
+    // 3. Create data message
+    const dataMessage = `Summarize the following data:\n\n\`\`\`${data}\`\`\``;
+
+    const messages: ChatCompletionMessageParam[] = [
+      {
+        role: 'assistant',
+        content: systemPrompt,
+      },
+      {
+        role: 'user',
+        content: dataMessage,
+      },
+    ];
+
+    const messagesTokens = await getTokens(
+      messages.map((m) => m.content).join(''),
+    );
+
+    if (messagesTokens > this.summarierTokensLimit) {
+      throw new Error(
+        `The summarizer model can only handle ${this.summarierTokensLimit} tokens, but the messages have ${messagesTokens} tokens`,
+      );
+    }
+
+    return {
+      data: messages,
+      tokens: messagesTokens,
+    };
+  };
 
   /**
    * @description Creates a summary of the given data
@@ -54,43 +110,11 @@ export class DataChunks extends BaseClass {
         throw new Error(`The data does not have a formatted_data`);
       }
 
-      // 1. Summarization Instructions
-      const summarizationInstructions =
-        'Instructions: Summarize the given data concisely, focusing on the key points and information. ' +
-        'Ensure the summary is clear and informative, to assist a secondary GPT instance in understanding the data context.\n';
+      // 1. Get summary message
+      const { data: messages, tokens: messagesTokens } =
+        await this.getSummaryMessage(formatted_data);
 
-      // 2. Output Format
-      const outputFormatInstructions =
-        'Output Format: Provide the summary in a structured format, with a title and bullet points capturing the key information.\n';
-
-      // Combining all parts to form the complete prompt
-      const systemPrompt = summarizationInstructions + outputFormatInstructions;
-
-      // 3. Create data message
-      const dataMessage = `Summarize the following data:\n\n\`\`\`${formatted_data}\`\`\``;
-
-      const messages: ChatCompletionMessage[] = [
-        {
-          role: 'system',
-          content: systemPrompt,
-        },
-        {
-          role: 'user',
-          content: dataMessage,
-        },
-      ];
-
-      const messagesTokens = await getTokens(
-        messages.map((m) => m.content).join(''),
-      );
-
-      if (messagesTokens > this.summarierTokensLimit) {
-        throw new Error(
-          `The summarizer model can only handle ${this.summarierTokensLimit} tokens, but the messages have ${messagesTokens} tokens`,
-        );
-      }
-
-      // 4. Create the summarization
+      // 2. Create the summarization
       this.log(
         'createSummary',
         `Data tokens: ${messagesTokens}\n\nCreating data summarization...`,
@@ -103,25 +127,14 @@ export class DataChunks extends BaseClass {
           messages,
         }).call();
 
-      // TODO: Check how to embed data of more than 8k tokens
-      // this.log('createSummary', 'Creating summary embeddings...');
-      // const summaryEmbedding = await new OpenAIEmbeddings({
-      //   verbose: this.verbose,
-      //   text: summary.data.content,
-      // }).call();
-
       const response = {
-        summary: {
-          data: summary.data.content,
-          costs: summary.costs,
-          usageData: summary.usageData,
-        },
-        summaryEmbedding: {
-          data: [],
-          costs: 0,
-          usageData: 0,
-        },
+        data: summary.data.content,
+        costs: summary.costs,
+        usageData: summary.usageData,
       };
+
+      this.totalCost += summary.costs.total;
+      this.totalUsage += summary.usageData.total;
 
       this.log(
         `createSummary`,
@@ -135,6 +148,63 @@ export class DataChunks extends BaseClass {
     }
   };
 
+  public processAssignedDataChunks = async (params: {
+    data: AssignedDataChunk[];
+  }) => {
+    const { data } = params;
+    try {
+      // 1. Filter existing and not existing data chunks
+      const dataChunksUpdates = data.filter((d) => d.data_chunk_id);
+      const newDataChunks = data.filter((d) => !d.data_chunk_id);
+
+      // 2. Create new data chunks
+      const newDataChunksPromises = newDataChunks.map(
+        async (assignedDataChunk) => {
+          const dataChunk = await this.create({
+            data: assignedDataChunk,
+          });
+
+          return dataChunk;
+        },
+      );
+      const newDataChunksResult = await Promise.all(newDataChunksPromises);
+
+      // 3. Update existing data chunks
+      const dataChunkUpdatesPromises = dataChunksUpdates.map(
+        async (assignedDataChunk) => {
+          const dataChunk = await this.update({
+            data: assignedDataChunk,
+          });
+
+          return dataChunk;
+        },
+      );
+
+      const dataChunkUpdatesResult = (
+        await Promise.all(dataChunkUpdatesPromises)
+      ).filter((d) => d) as SupabaseDataChunk[];
+
+      this.log(
+        'processAssignedDataChunks',
+        `Data chunks updates: ${dataChunkUpdatesResult.length}\nNew data chunks: ${newDataChunksResult.length}\n\nTotal Cost: ${this.totalCost}\nTotal Usage: ${this.totalUsage}`,
+      );
+
+      return {
+        new: newDataChunksResult,
+        updated: dataChunkUpdatesResult,
+        cost: this.totalCost,
+        usage: this.totalUsage,
+      };
+    } catch (error: any) {
+      this.log(
+        'processAssignedDataChunks - Error',
+        error.message || error,
+        true,
+      );
+      throw new Error(error.message || error);
+    }
+  };
+
   /**
    * @description Gets data chunks based on the parameters
    * @param ai_table_name The AI table name to get the data chunks from
@@ -143,9 +213,10 @@ export class DataChunks extends BaseClass {
    * @returns The data chunks that match the parameters
    */
   public get = async (params: DataChunkGetParams = {}) => {
+    const tokensLimit = await this.getTokensLimit();
     const { ai_table_name, tokensAscending, avialableTokens, data_chunk_ids } =
       params;
-    const maxTokens = avialableTokens && this.tokensLimit - avialableTokens;
+    const maxTokens = avialableTokens && tokensLimit - avialableTokens;
 
     try {
       const dataChunks: SupabaseGetDataResponse<SupabaseDataChunk> =
@@ -177,7 +248,7 @@ export class DataChunks extends BaseClass {
 
       this.log(
         'create',
-        `Data tokens: ${data.tokens}\n\nData Summary tokens: ${summaryData.summary.usageData.completion}`,
+        `Data tokens: ${data.tokens}\n\nData Summary tokens: ${summaryData.usageData.completion}`,
       );
 
       // 3. Create the data chunk in the database
@@ -185,9 +256,8 @@ export class DataChunks extends BaseClass {
       const dataChunk: DataChunkInsert = {
         formatted_data: data.formatted_data,
         ai_table_name: data.ai_table_name,
-        summary: summaryData.summary.data,
+        summary: summaryData.data,
         tokens: data.tokens,
-        summary_embedding: summaryData.summaryEmbedding.data,
       };
 
       const { data: supabaseDataChunk, error } = await this.supabase.insertData(
@@ -201,45 +271,45 @@ export class DataChunks extends BaseClass {
         throw error;
       }
 
-      return supabaseDataChunk;
+      return supabaseDataChunk as SupabaseDataChunk;
     } catch (error: any) {
       this.log('create - Error', error.message || error, true);
       throw error;
     }
   };
 
-  public update = async (params: DataChunksUpdateParams) => {
+  public update = async (params: DataChunksCreateParams) => {
+    const { data } = params;
     try {
-      const { data } = params;
-      // 1. Check if the data chunk exists
-      this.log('update', 'Checking if the data chunk exists...');
-
       if (!data.data_chunk_id) {
         throw new Error(`The data chunk does not exist`);
       }
 
-      // TODO: When embeddings token limit is increased, uncomment this
-      // if (!data.summary_embedding) {
-      //   throw new Error(`The data chunk does not have a summary embedding`);
-      // }
+      // 1. Create a summary of the data
+      const summaryData = await this.createSummary(data.formatted_data);
 
-      const checkDataChunk: SupabaseGetDataResponse<SupabaseDataChunk> =
-        await this.supabase.getData({
-          ids: [data.data_chunk_id],
-          table_name: this.supabaseDBName,
-        });
+      // 2. Update the data chunk in the database
+      const dataChunkUpdate = {
+        formatted_data: data.formatted_data,
+        summary: summaryData.data,
+        tokens: data.tokens,
+        id: data.data_chunk_id,
+      };
 
-      if (checkDataChunk.error) {
-        throw checkDataChunk.error;
+      const supabaseResult = await this.supabase.updateData({
+        data: [dataChunkUpdate],
+        table_name: this.supabaseDBName,
+      });
+
+      if (supabaseResult.error) {
+        throw supabaseResult.error;
       }
 
-      if (!checkDataChunk.data) {
-        throw new Error(`The data chunk does not exist`);
-      }
+      const supabaseDataChunk = supabaseResult.data
+        ? (supabaseResult.data[0] as SupabaseDataChunk) || null
+        : null;
 
-      // 2.
-
-      // return supabaseDataChunk;
+      return supabaseDataChunk;
     } catch (error: any) {
       this.log('update - Error', error.message || error, true);
       throw error;

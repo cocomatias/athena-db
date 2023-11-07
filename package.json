@@ -23,6 +23,7 @@
     "nodemon": "^3.0.1",
     "openai": "^4.12.4",
     "pg-promise": "^11.5.4",
+    "tiktoken": "^1.0.10",
     "ts-node": "^10.9.1",
     "typescript": "^5.2.2"
   },

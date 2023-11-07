@@ -22,6 +22,9 @@ export const getTokensLimit = (model: GPTModelName) => {
     case GPTModelName.GPT432k0613:
       tokensLimit = 31000;
       break;
+    case GPTModelName.GPT4TURBO:
+      tokensLimit = 120000;
+      break;
     case GPTModelName.GPT3:
       tokensLimit = 3900;
       break;

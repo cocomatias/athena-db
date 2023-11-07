@@ -9,9 +9,9 @@ import {
   AssignedDataChunk,
 } from '@types';
 import { BaseClass } from '@utils/BaseClass';
-import { SupabaseConnection } from './SupabaseConnection';
 import { DataChunks } from './DataChunks';
 import { Data } from './Data';
+import { SupabaseConnection } from './SupabaseConnection';
 
 type DataManagerAddParams = {
   data: AddDataParams[];
@@ -19,9 +19,7 @@ type DataManagerAddParams = {
 };
 
 export class DataManager extends BaseClass {
-  private supabase = new SupabaseConnection(this.verbose);
   private dataChunks = new DataChunks({ verbose: this.verbose });
-  private dataChunksTokensLimit = this.dataChunks.tokensLimit;
   private data = new Data({ verbose: this.verbose });
   private supabaseAITableName: SupabaseDBNames = 'ai_db_table';
   private totalUsage = 0;
@@ -104,6 +102,7 @@ export class DataManager extends BaseClass {
 
   public assignDataChunks = async (params: { data: GroupedDataObject[] }) => {
     const { data } = params;
+    const dataChunksTokensLimit = await this.dataChunks.getTokensLimit();
     // 1. Get the data chunks based on the ai_table_name
     this.log(
       'assignDataChunks',
@@ -136,7 +135,7 @@ export class DataManager extends BaseClass {
         let chunk = existingDataChunks.find(
           (chunk) =>
             chunk.ai_table_name === dataInsert.ai_table_name &&
-            chunk.tokens + dataInsert.tokens <= this.dataChunksTokensLimit,
+            chunk.tokens + dataInsert.tokens <= dataChunksTokensLimit,
         );
 
         // If no suitable chunk is found, create a new one without chunk_id and formatted_data, representing a new data chunk
@@ -211,7 +210,7 @@ export class DataManager extends BaseClass {
       });
 
       this.log('add', `Creating ${data.length} data objects...`);
-      const dataObjects = await Promise.all(dataObjectsPromises);
+      const dataObjects = (await Promise.all(dataObjectsPromises)).flat();
       this.log(
         'add',
         `Created ${dataObjects.length} data objects.\n\nTotal Cost: ${this.totalCost}\nTotal Usage: ${this.totalUsage}`,

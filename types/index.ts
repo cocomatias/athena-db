@@ -85,6 +85,7 @@ export enum GPTModelName {
   GPT432k = 'gpt-4-32k',
   GPT432k0314 = 'gpt-4-32k-0314',
   GPT432k0613 = 'gpt-4-32k-0613',
+  GPT4TURBO = 'gpt-4-1106-preview',
   GPT3 = 'gpt-3.5-turbo',
   GPT316k = 'gpt-3.5-turbo-16k',
   GPT30301 = 'gpt-3.5-turbo-0301',
@@ -129,6 +130,7 @@ export type BaseQueryParams = {
   maxTokens?: number;
   tokensAscending?: boolean; // If true, the query will order the data by tokens ascending
   ids?: string[]; // The uuids to get the data from
+  data_chunk_id?: string; // The data chunk id to get the data from
 };
 
 export type BuildQueryParams = BaseQueryParams & {
@@ -166,8 +168,19 @@ export type SupabaseGetDataResponse<T> = {
  */
 export type SupabaseUpdateDataFunctionParams = {
   table_name: SupabaseDBNames;
-  data: AIDBTableUpdate | DataUpdate | DataChunkUpdate;
-  id: string;
+  data: ({ id: string } & Partial<
+    SupabaseAIDBTable | SupabaseDataChunk | SupabaseData
+  >)[];
+};
+
+const test: SupabaseUpdateDataFunctionParams = {
+  table_name: 'ai_db_data',
+  data: [
+    {
+      id: 'test',
+      formatted_data: 'test',
+    },
+  ],
 };
 
 /*
@@ -187,6 +200,8 @@ export type DataUpdate = {
   data?: DataInsert['data'];
   ai_table_name?: string;
   data_chunk?: string;
+  embedding?: number[];
+  tokens?: number;
 };
 
 export type DataInsert = {
@@ -198,9 +213,10 @@ export type DataInsert = {
 };
 
 export type DataChunkUpdate = {
-  formattedData?: string;
+  formatted_data?: string;
   summary?: string;
   ai_table_name?: string;
+  tokens?: number;
 };
 
 export type DataChunkInsert = {
@@ -208,7 +224,6 @@ export type DataChunkInsert = {
   summary: string;
   ai_table_name: string;
   tokens: number;
-  summary_embedding: number[];
 };
 
 /*
@@ -227,7 +242,7 @@ export type GroupedDataObject = {
 
 export type AssignedDataChunk = {
   data_chunk_id?: string; // If the data chunk is new, this will be undefined
-  summary_embedding?: number[]; // If the data chunk is new, this will be undefined
+  summary?: string; // If the data chunk is new, this will be undefined
   formatted_data: string;
   ai_table_name: string;
   data: DataInsert[]; // Representing the new data to be inserted in the data chunk

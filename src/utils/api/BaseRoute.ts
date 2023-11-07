@@ -107,6 +107,10 @@ abstract class BaseRoute {
    * @returns The response. If streaming is enabled, it will send the response and end the request, else it will return the response.
    */
   protected returnResponse = (response?: any) => {
+    if (typeof response === 'number') {
+      throw new Error('Response is a number. It must be an object or string');
+    }
+
     if (this.streaming) {
       if (response) {
         response =

@@ -9,6 +9,11 @@ const gpt432Kcosts = {
   completion: 0.12 / 1000,
 };
 
+const gpt4TurboCost = {
+  prompt: 0.01 / 1000,
+  completion: 0.03 / 1000,
+};
+
 const gpt316KCost = {
   prompt: 0.003 / 1000,
   completion: 0.004 / 1000,
@@ -39,6 +44,9 @@ export const getModelsTokenCost = (model: GPTModelName) => {
       break;
     case GPTModelName.GPT432k0613:
       tokensCost = gpt432Kcosts;
+      break;
+    case GPTModelName.GPT4TURBO:
+      tokensCost = gpt4TurboCost;
       break;
     case GPTModelName.GPT3:
       tokensCost = gpt3Cost;

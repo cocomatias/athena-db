@@ -15,6 +15,7 @@ export class OpenAIEmbeddings extends BaseClass {
   private text: string;
   private costPerToken = new Decimal('0.0001').dividedBy(1000);
   readonly dimensions = 1536;
+  readonly tokensLimit = 8000;
 
   constructor(params: OpenAIEmbeddingsParams) {
     super(params);
