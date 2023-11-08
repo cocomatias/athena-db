@@ -35,7 +35,7 @@ export class BaseClass {
     this.sendMessageFunction = params.sendMessageFunction;
   }
 
-  /*
+  /**
    * @param title - The title of the log
    * @param message - The message to log
    * @param error - Optional parameter to log as an error
@@ -48,7 +48,7 @@ export class BaseClass {
     }
   };
 
-  /*
+  /**
    * @param message - The message to send
    * @param prefix - Optional parameter to add a prefix to the message. If it's false, no prefix will be added.
    */

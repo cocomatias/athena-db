@@ -11,7 +11,6 @@ import {
 import { BaseClass } from '@utils/BaseClass';
 import { DataChunks } from './DataChunks';
 import { Data } from './Data';
-import { SupabaseConnection } from './SupabaseConnection';
 
 type DataManagerAddParams = {
   data: AddDataParams[];
@@ -221,11 +220,30 @@ export class DataManager extends BaseClass {
         this.data.groupDataObjectsByAiTableName(dataObjects);
 
       // 4. Assign Data Chunks
-      const dataChunks = await this.assignDataChunks({
+      const assignedDataChunks = await this.assignDataChunks({
         data: groupedDataObjects,
       });
 
-      return dataChunks;
+      // 5. Process Assigned Data Chunks
+      const processedDataChunks =
+        await this.dataChunks.processAssignedDataChunks({
+          data: assignedDataChunks,
+        });
+
+      this.totalCost += processedDataChunks.cost;
+      this.totalUsage += processedDataChunks.usage;
+
+      // 6. Create new Datas
+      const proccesedData = await this.data.processProcessedDataChunks({
+        data: [...processedDataChunks.new, ...processedDataChunks.updated],
+      });
+
+      return {
+        cost: this.totalCost,
+        usage: this.totalUsage,
+        dataChunks: processedDataChunks,
+        data: proccesedData,
+      };
     } catch (error: any) {
       this.log('add - Error', error.message || error, true);
       throw new Error(error.message || error);

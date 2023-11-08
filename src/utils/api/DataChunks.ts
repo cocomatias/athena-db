@@ -1,22 +1,26 @@
+// Vendors
+import { ChatCompletionMessageParam } from 'openai/resources';
+import { OpenAIChatCompletion } from './OpenAIChatCompletion';
+// Utils
+import { Data } from './Data';
 import { BaseClass } from '@utils/BaseClass';
-import { SupabaseConnection } from './SupabaseConnection';
+import { getTokensLimit } from '@utils/getTokensLimit';
+import { getTokens } from '@utils/getTokens';
+// Types
 import {
   AssignedDataChunk,
+  DataChunkAnswer,
   DataChunkInsert,
-  DataChunkUpdate,
   DefaultClassParams,
   DefaultGPTCompletionResponse,
   GPTModelName,
   OpenAIChatCompletionResponse,
+  ProcessedDataChunk,
   SupabaseDBNames,
   SupabaseDataChunk,
+  SupabaseDataChunkWithQuestion,
   SupabaseGetDataResponse,
 } from '@types';
-import { getTokensLimit } from '@utils/getTokensLimit';
-import { getTokens } from '@utils/getTokens';
-import { ChatCompletionMessageParam } from 'openai/resources';
-import { OpenAIChatCompletion } from './OpenAIChatCompletion';
-import { Data } from './Data';
 
 type DataChunkGetParams = {
   ai_table_name?: string | string[];
@@ -32,18 +36,10 @@ type DataChunksCreateParams = {
 export class DataChunks extends BaseClass {
   private supabaseDBName: SupabaseDBNames = 'ai_db_data_chunk';
   private summarizerModel: GPTModelName = GPTModelName.GPT316k;
-  private _data?: Data;
+  private questionResponderModel: GPTModelName = GPTModelName.GPT316k;
   private summarierTokensLimit = getTokensLimit(this.summarizerModel); // The tokens limit for the summarizer model
   private totalCost = 0;
   private totalUsage = 0;
-
-  // Lazy initializer for Data
-  private get data(): Data {
-    if (!this._data) {
-      this._data = new Data({ verbose: this.verbose });
-    }
-    return this._data;
-  }
 
   constructor(params: DefaultClassParams) {
     super(params);
@@ -128,7 +124,7 @@ export class DataChunks extends BaseClass {
         }).call();
 
       const response = {
-        data: summary.data.content,
+        data: summary.data.content!,
         costs: summary.costs,
         usageData: summary.usageData,
       };
@@ -148,6 +144,21 @@ export class DataChunks extends BaseClass {
     }
   };
 
+  private createProccecedDataChunk = (
+    assignedData: AssignedDataChunk,
+    dataChunk: SupabaseDataChunk,
+  ) => {
+    const response: ProcessedDataChunk = {
+      ...dataChunk,
+      data: assignedData.data.map((d) => ({
+        ...d,
+        data_chunk: dataChunk.id,
+      })),
+    };
+
+    return response;
+  };
+
   public processAssignedDataChunks = async (params: {
     data: AssignedDataChunk[];
   }) => {
@@ -164,29 +175,32 @@ export class DataChunks extends BaseClass {
             data: assignedDataChunk,
           });
 
-          return dataChunk;
+          return this.createProccecedDataChunk(assignedDataChunk, dataChunk);
         },
       );
       const newDataChunksResult = await Promise.all(newDataChunksPromises);
 
+      this.sendMessage(`Created ${newDataChunksResult.length} data chunks`);
+
       // 3. Update existing data chunks
       const dataChunkUpdatesPromises = dataChunksUpdates.map(
         async (assignedDataChunk) => {
-          const dataChunk = await this.update({
+          const dataChunk = (await this.update({
             data: assignedDataChunk,
-          });
+          })) as SupabaseDataChunk;
 
-          return dataChunk;
+          return this.createProccecedDataChunk(assignedDataChunk, dataChunk);
         },
       );
 
       const dataChunkUpdatesResult = (
         await Promise.all(dataChunkUpdatesPromises)
-      ).filter((d) => d) as SupabaseDataChunk[];
+      ).filter((d) => d);
 
+      this.sendMessage(`Updated ${dataChunkUpdatesResult.length} data chunks`);
       this.log(
-        'processAssignedDataChunks',
-        `Data chunks updates: ${dataChunkUpdatesResult.length}\nNew data chunks: ${newDataChunksResult.length}\n\nTotal Cost: ${this.totalCost}\nTotal Usage: ${this.totalUsage}`,
+        `processAssignedDataChunks`,
+        `Data chunks updates: ${dataChunkUpdatesResult.length}\nNew data chunks: ${newDataChunksResult.length}\nTotal Cost: ${this.totalCost}\nTotal Usage: ${this.totalUsage}`,
       );
 
       return {
@@ -271,7 +285,7 @@ export class DataChunks extends BaseClass {
         throw error;
       }
 
-      return supabaseDataChunk as SupabaseDataChunk;
+      return (supabaseDataChunk?.[0] || supabaseDataChunk) as SupabaseDataChunk;
     } catch (error: any) {
       this.log('create - Error', error.message || error, true);
       throw error;
@@ -294,6 +308,7 @@ export class DataChunks extends BaseClass {
         summary: summaryData.data,
         tokens: data.tokens,
         id: data.data_chunk_id,
+        ai_table_name: data.ai_table_name,
       };
 
       const supabaseResult = await this.supabase.updateData({
@@ -312,6 +327,73 @@ export class DataChunks extends BaseClass {
       return supabaseDataChunk;
     } catch (error: any) {
       this.log('update - Error', error.message || error, true);
+      throw error;
+    }
+  };
+
+  readonly respondQuestions = async (params: {
+    data: SupabaseDataChunkWithQuestion[];
+  }) => {
+    const { data } = params;
+    try {
+      const respondQuestion = async (
+        data: SupabaseDataChunkWithQuestion,
+      ): Promise<DataChunkAnswer> => {
+        const { question, formatted_data } = data;
+        // 1. Create the system message
+        const role =
+          'Role: You are a Data Chunk Question Responder designed to answer any user prompt from the given data.';
+        const instructions = `Instructions: Answer the user prompt with the given data.`;
+        const constraints = `Constraints: If you don't find the answer in the data, you must respond with 'I don't know'.`;
+        const dataInfo = `\nData:\n\n${formatted_data}`;
+
+        const systemMessage = [role, instructions, constraints, dataInfo].join(
+          '\n',
+        );
+
+        const messages: ChatCompletionMessageParam[] = [
+          {
+            role: 'system',
+            content: systemMessage,
+          },
+          {
+            role: 'user',
+            content: question,
+          },
+        ];
+
+        // 2. Create the question response
+        const response = await new OpenAIChatCompletion({
+          verbose: this.verbose,
+          model: this.questionResponderModel,
+          messages,
+        }).call();
+
+        // 3. Get the answer
+        let answer: string | null = response.data.content!;
+        const dontKnowRgx = /^(i\s+)?(really\s+)?don('|`)?t\s+know$/gi;
+
+        if (answer.match(dontKnowRgx)) {
+          answer = null;
+        }
+
+        return {
+          answer: response.data.content!,
+          question: question,
+          data_chunk: data.id,
+          costs: response.costs.total,
+          usage: response.usageData.total,
+        };
+      };
+
+      const responsesPromises = data.map(respondQuestion);
+      const responses = await Promise.all(responsesPromises);
+      const costs = responses.reduce((acc, r) => acc + r.costs, 0);
+      const usage = responses.reduce((acc, r) => acc + r.usage, 0);
+
+      return { data: responses, costs, usage };
+    } catch (error: any) {
+      this.log('respondQuestions - Error', error.message || error, true);
       throw error;
     }
   };

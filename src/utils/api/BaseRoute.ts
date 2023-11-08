@@ -3,13 +3,7 @@ import { Request, Response } from 'express';
 // Utils
 import { niceLog } from '@utils/niceLog';
 import { sendMessage as sendMessageUtil } from '@utils/api/sendMessage';
-
-type BaseRouteParams = {
-  req: Request;
-  res: Response;
-  verbose?: boolean;
-  allowStreaming?: boolean;
-};
+import { BaseRouteParams } from '@types';
 
 abstract class BaseRoute {
   protected req: Request;
@@ -50,7 +44,7 @@ abstract class BaseRoute {
   /**
    * @description Handles the route
    */
-  public handle = async () => {
+  readonly handle = async () => {
     try {
       this.checkStreaming();
       await this.execute();
@@ -93,11 +87,21 @@ abstract class BaseRoute {
   protected handleError = (error: any) => {
     this.log(`Error`, error, true);
 
-    if (this.streaming) {
-      this.sendMessage(`Error: ${error.message || error}`);
-      this.res.end();
+    // Check if headers have already been sent
+    if (!this.res.headersSent) {
+      if (this.streaming) {
+        this.sendMessage(`Error: ${error.message || error}`);
+        this.res.end();
+      } else {
+        this.res.status(500).send(error.message || error);
+      }
     } else {
-      return this.res.status(500).send(error.message || error);
+      // If the headers have already been sent, log the error, but do not attempt to send another response
+      this.log(
+        'Failed to send error response because headers have already been sent',
+        error,
+        true,
+      );
     }
   };
 

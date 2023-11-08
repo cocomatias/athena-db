@@ -1,15 +1,13 @@
 // Vendors
 import OpenAI from 'openai';
 import {
-  ChatCompletionFunctionMessageParam,
-  ChatCompletionMessage,
   ChatCompletionMessageParam,
   ChatCompletionMessageToolCall,
+  ChatCompletionTool,
 } from 'openai/resources/chat';
 // Types
 import {
   DefaultClassParams,
-  DynamicFunction,
   GPTModelName,
   OpenAIChatCompletionResponse as Response,
 } from '@types';
@@ -18,9 +16,9 @@ import { getModelsTokenCost } from '@utils/getModelsTokenCost';
 import { BaseClass } from '@utils/BaseClass';
 
 interface OpenAIChatCompletionProps extends DefaultClassParams {
-  functions?: DynamicFunction[];
+  tools?: ChatCompletionTool[];
   messages: ChatCompletionMessageParam[];
-  executeFunction?: boolean;
+  executeTools?: boolean;
   model?: GPTModelName;
   temperature?: number;
 }
@@ -28,15 +26,17 @@ interface OpenAIChatCompletionProps extends DefaultClassParams {
 const functionModels = [
   GPTModelName.GPT30613,
   GPTModelName.GPT316k0613,
+  GPTModelName.GPT316k,
   GPTModelName.GPT40613,
   GPTModelName.GPT432k0613,
+  GPTModelName.GPT4TURBO,
 ];
 
 export class OpenAIChatCompletion extends BaseClass {
   private openai: OpenAI;
   private model: GPTModelName = GPTModelName.GPT30613;
   private apiKey = process.env.OPENAI_API_KEY;
-  private functions?: DynamicFunction[];
+  private tools?: ChatCompletionTool[];
   private messages: ChatCompletionMessageParam[] = [];
   private executeFunction: boolean;
   private temperature: number = 0;
@@ -45,21 +45,21 @@ export class OpenAIChatCompletion extends BaseClass {
     model,
     verbose,
     messages,
-    functions,
-    executeFunction,
+    tools: functions,
+    executeTools: executeFunction,
     temperature,
   }: OpenAIChatCompletionProps) {
     super({ verbose });
     this.openai = new OpenAI({ apiKey: this.apiKey });
     this.model = model || this.model;
-    this.functions = functions;
+    this.tools = functions;
     this.messages = messages;
     this.executeFunction = executeFunction || true;
     this.temperature = temperature || 0;
     this.titleExtra = `| model: "${this.model}" | temperature: ${this.temperature} |`;
 
     // Check if the model supports function callings
-    if (this.functions && !functionModels.includes(this.model)) {
+    if (this.tools && !functionModels.includes(this.model)) {
       throw new Error(
         `Model '${this.model}' does not support function callings.`,
       );
@@ -70,13 +70,13 @@ export class OpenAIChatCompletion extends BaseClass {
     try {
       // Generate a cache key based on input parameters
       const cacheKey = `${this.model}-${JSON.stringify(
-        this.functions,
+        this.tools,
       )}-${JSON.stringify(this.messages)}-${this.temperature}`;
 
       const completition = await this.openai.chat.completions.create({
         model: this.model,
         temperature: this.temperature,
-        functions: this.functions,
+        tools: this.tools,
         messages: this.messages,
       });
       const usageData = {
@@ -95,18 +95,11 @@ export class OpenAIChatCompletion extends BaseClass {
       costs.total = costs.prompt + costs.completion;
 
       const response = completition.choices[0].message;
-      if (response && response.tool_calls) {
-        if (this.executeFunction) {
-          this.log('Function Call - Executing function', response);
-          const funcReturns = await Promise.all(
-            response.tool_calls.map(async (func) => {
-              const funcReturn = await this._executeFunction(func);
-              return funcReturn;
-            }),
-          );
-          if (!funcReturns.length) {
-            this.log('Function Call - What the function returned', funcReturns);
-            return { data: funcReturns, usageData, costs };
+      if (response.tool_calls) {
+        for (const tool of response.tool_calls) {
+          if (tool.function) {
+            const args = JSON.parse(tool.function.arguments);
+            tool.function.arguments = args;
           }
         }
       }
@@ -120,45 +113,47 @@ export class OpenAIChatCompletion extends BaseClass {
     }
   };
 
-  private _executeFunction = async (
-    _function: ChatCompletionMessageToolCall,
-  ): Promise<any> => {
-    try {
-      const funcArgs = _function;
-      const func = this.getFunction(_function.function);
-      if (func && func?.call) {
-        let parsedFuncArgs: any;
-        if (funcArgs) {
-          try {
-            parsedFuncArgs = JSON.parse(funcArgs.function.arguments);
-          } catch (err) {
-            parsedFuncArgs = this.jsonParseFixer(funcArgs.function.arguments);
-          }
-        }
-        parsedFuncArgs = { ...parsedFuncArgs, verbose: this.verbose };
-        const funcReturn = await func?.call(parsedFuncArgs);
-        if (funcReturn !== undefined) {
-          return funcReturn;
-        }
-      }
-    } catch (err: any) {
-      throw new FunctionCallError(
-        `Error occurred while executing the function ${
-          _function.function.name || ''
-        }: ` + err.message || err,
-      );
-    }
-  };
+  // TODO: Fix function/tools callings
+  // private _executeTools = async (
+  //   tools: ChatCompletionMessageToolCall,
+  // ): Promise<any> => {
+  //   try {
+  //     const func = this.getTool(tools);
+  //     if (func && func?.function.) {
+  //       let parsedFuncArgs: any;
+  //       if (tools) {
+  //         try {
+  //           parsedFuncArgs = JSON.parse(tools.function.arguments);
+  //         } catch (err) {
+  //           parsedFuncArgs = this.jsonParseFixer(tools.function.arguments);
+  //         }
+  //       }
+  //       parsedFuncArgs = { ...parsedFuncArgs, verbose: this.verbose };
+  //       const funcReturn = await func?.call(parsedFuncArgs);
+  //       if (funcReturn !== undefined) {
+  //         return funcReturn;
+  //       }
+  //     }
+  //   } catch (err: any) {
+  //     throw new FunctionCallError(
+  //       `Error occurred while executing the function ${
+  //         tools.function.name || ''
+  //       }: ` + err.message || err,
+  //     );
+  //   }
+  // };
 
-  private getFunction = (
-    _function: ChatCompletionMessageToolCall.Function,
-  ): DynamicFunction => {
-    const func = this.functions?.find((func) => func.name === _function?.name);
+  private getTool = (
+    tools: ChatCompletionMessageToolCall,
+  ): ChatCompletionTool => {
+    const func = this.tools?.find(
+      (func) => func.function.name === tools?.function.name,
+    );
     if (func) {
       return func;
     }
 
-    throw new Error(`Function '${_function.name}' not found.`);
+    throw new Error(`Function '${tools.function.name}' not found.`);
   };
 
   private jsonParseFixer = (json: string) => {

@@ -41,6 +41,10 @@ export const getTokens = async (
     if (model === GPTModelName.GPT4TURBO) {
       model = GPTModelName.GPT4;
     }
+
+    if (model === GPTModelName.GPT316k) {
+      model = GPTModelName.GPT3;
+    }
     const enc = encoding_for_model(model);
     if (Array.isArray(str)) {
       str = str.join('');

@@ -8,7 +8,7 @@ export const capitalize = (str: string) => str[0].toUpperCase() + str.slice(1);
 /**
  * @description Converts an object to a string
  * @param obj The object to convert to a string
- * @param newLinesAmount The amount of new lines to add between each key-value pair
+ * @param newLinesAmount The amount of new lines to add between each key-value pair. Default is 2
  * @returns The string representation of the object
  */
 export const getStringFromObject = (

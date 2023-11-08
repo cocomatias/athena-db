@@ -1,17 +1,19 @@
-import {
-  DataInsert,
-  DefaultClassParams,
-  GroupedDataObject,
-  SupabaseDBNames,
-  SupabaseData,
-  SupabaseGetDataResponse,
-} from '@types';
+// Utils
 import { BaseClass } from '@utils/BaseClass';
 import { getStringFromObject } from '@utils/getStringFromObject';
 import { getTokens } from '@utils/getTokens';
 import { OpenAIEmbeddings } from './OpenAIEmbeddings';
 import { DataChunks } from './DataChunks';
-import { SupabaseConnection } from './SupabaseConnection';
+// Types
+import {
+  DataInsert,
+  DefaultClassParams,
+  GroupedDataObject,
+  ProcessedDataChunk,
+  SupabaseDBNames,
+  SupabaseData,
+  SupabaseGetDataResponse,
+} from '@types';
 
 type CreateDataObjectParams = {
   data: DataInsert['data'];
@@ -207,7 +209,7 @@ export class Data extends BaseClass {
       const dataToInsert: DataInsert = {
         tokens,
         ai_table_name: aiTable,
-        data,
+        data: data.data,
         formatted_data,
         embedding: embeddingData.data,
       };
@@ -244,6 +246,84 @@ export class Data extends BaseClass {
       return data.data;
     } catch (error: any) {
       this.log('getData - Error', error.message || error, true);
+      throw new Error(error.message || error);
+    }
+  };
+
+  readonly createData = async (params: {
+    data: DataInsert[];
+    data_chunk: string;
+  }): Promise<SupabaseData[]> => {
+    const { data, data_chunk } = params;
+    try {
+      // Check if all the given data has the same data_chunk
+      data.map((d) => {
+        if (d.data_chunk !== data_chunk) {
+          throw new Error(
+            `The given data does not have the same DataChunk ID\n\ndata_chunk: ${data_chunk}\ndata.data_chunk: ${d.data_chunk}`,
+          );
+        }
+      });
+
+      const { data: supabaseData, error } = await this.supabase.insertData({
+        table_name: this.supabaseDBName,
+        data,
+      });
+
+      if (error) {
+        throw error;
+      }
+
+      this.log(
+        'createData',
+        `Created ${supabaseData.length} data for DataChunk ${data_chunk}`,
+      );
+
+      return supabaseData as SupabaseData[];
+    } catch (error: any) {
+      this.log('createData - Error', error.message || error, true);
+      throw new Error(error.message || error);
+    }
+  };
+
+  readonly processProcessedDataChunks = async (params: {
+    data: ProcessedDataChunk[];
+  }) => {
+    const { data } = params;
+    try {
+      // 1. Check if all the data chunks exist
+      data.map((d) => {
+        if (!d.id) {
+          throw new Error(`The given data chunk does not exist`);
+        }
+        return d;
+      });
+
+      // 2. Create Datas
+      const dataPromises = data.map(async (d) => {
+        const createdData = await this.createData({
+          data: d.data,
+          data_chunk: d.id!,
+        });
+
+        return createdData;
+      });
+
+      const createdData = (await Promise.all(dataPromises)).flat();
+
+      this.sendMessage(`Created ${createdData.length} datas`);
+      this.log(
+        'processProcessedDataChunks',
+        `Created ${createdData.length} data`,
+      );
+
+      return createdData as SupabaseData[];
+    } catch (error: any) {
+      this.log(
+        'processAssignedDataChunks - Error',
+        error.message || error,
+        true,
+      );
       throw new Error(error.message || error);
     }
   };

@@ -23,7 +23,7 @@ export const getTokensLimit = (model: GPTModelName) => {
       tokensLimit = 31000;
       break;
     case GPTModelName.GPT4TURBO:
-      tokensLimit = 120000;
+      tokensLimit = 38000; // When the rate-limit increase from 40k, change this value. The real token limit is 128k
       break;
     case GPTModelName.GPT3:
       tokensLimit = 3900;

@@ -657,6 +657,213 @@ export const mockDBBigDataWithoutTokens = [
   Yrigoyen ordenó intervenir las provincias de Mendoza y San Juan, gobernadas por movimientos radicales disidentes como el lencinismo en la primera y el bloquismo en la segunda. En ese marco un «matón» yrigoyenista asesinó al senador mendocino Carlos Washington Lencinas. El crimen causó estupor en el país. Al mes, hubo un atentado anarquista contra Yrigoyen al salir de su casa para ir a la Casa de Gobierno. El año 1930 se inició con otro asesinato de un opositor en una provincia intervenida por el gobierno, el del abogado bloquista Manuel Ignacio Castellano. Comenzó a ser habitual en la oposición, de estudiantes, políticos, militares, civiles, y amplios sectores del periodismo, criticar al presidente por su supuesta ineficacia y autoritarismo.
   
   El 2 de marzo se realizaron elecciones parlamentarias, perdiendo el radicalismo estrepitosamente en la Ciudad de Buenos Aires, donde el Partido Socialista Independiente obtuvo 100 000 votos, seguidos del Partido Socialista con 84 000, superando por mil votos a los radicales. En todo el país, la oposición alcanzó 695 000 votos, superando al gobierno que obtuvo 655 000 votos.96`,
+  `La Crisis Mundial de 1929 afectó fuertemente a la economía del país, porque su modelo agroexportador dependía de la venta de materias primas a mercados que se cerraron. El radicalismo estaba completamente dividido y no tenía diálogo con la oposición, muy crítica con el Gobierno.
+
+  El hecho más importante y duradero del segundo gobierno de Yrigoyen fue la decisión tomada el 1 de agosto por parte de YPF, dirigida por el general Enrique Mosconi, de intervenir en el mercado petrolero, para fijar el precio y romper los trusts. El golpe de Estado sucederá apenas 37 días después, lo que ha llevado a varios historiadores a vincular, al menos parcialmente, el golpe militar con la decisión de YPF.
+  
+  El 6 de septiembre de 1930 el general José Félix Uriburu derrocó al gobierno constitucional, iniciando una serie de golpes de Estado en Argentina y gobiernos militares que se extenderían hasta 1983, interrumpiendo todas las experiencias de gobierno surgidas del voto popular.
+  
+  Bibliografía
+  
+  del Mazo, Gabriel (1984). La segunda presidencia de Yrigoyen. Buenos Aires: CEAL. ISBN 950-25-0051-2.
+  Luna, Félix (1964). Yrigoyen. Buenos Aires: Desarrollo.
+  Acciones en pos de la defensa de la soberanía argentina en el sector antártico
+  En la década de los 1920 se destacó el accionar investigador y concientizador en Argentina de los derechos en el sector antártico del ingeniero civil José Manuel Moneta que intervino en las expediciones a las islas Orcadas del Sur de 1923, 1925. 1927 y 1929, dejando testimonio de ello en el libro Cuatro años en las Orcadas del Sur y, como diplomático, desempeñó en nombre del gobierno argentino varias funciones vinculadas a la Antártida.
+  
+  Fue en la primera mitad del siglo xx quien mediante publicaciones impresas y filmes quizás más tempranamente difundió entre la población la conciencia de una soberanía argentina en la Antártida.
+  
+  El 30 de marzo de 1927 fue inaugurada en las Orcadas del Sur la primera estación radiotelegráfica de la Antártida.
+  
+  El 15 de diciembre de 1927 la Dirección General de Correos y Telégrafos de la República Argentina comunicó a la Oficina Internacional de la Unión Postal Universal que:
+  (…) la jurisdicción territorial argentina se extiende, de derecho y de hecho, a la superficie continental, al mar territorial, a las islas situadas sobre la costa marítima, a una parte de Tierra del Fuego y a los Archipiélagos de los Estados, Año Nuevo, Georgia del Sur, Órcadas del Sur y a las tierras polares no delimitadas. De derecho, no pudiendo ejercerla de hecho debido a la ocupación mantenida por Gran Bretaña, le corresponde también el archipiélago de las Malvinas.
+  Artículo principal: Antártida Argentina
+  Véase también: Campañas antárticas argentinas
+  La «Década Infame» (1930-1943)
+  
+  Los cuatro presidentes del período: Uriburu, Justo, Ortiz y Castillo.
+  Artículo principal: Década Infame
+  Artículo principal: Concordancia (Argentina)
+  Véase también: Golpe de Estado en Argentina de 1930
+  La llamada Década Infame se inició con el golpe militar del 6 de septiembre de 1930 liderado por el general corporativista nacionalista católico José Félix Uriburu que derrocó al presidente Hipólito Yrigoyen de la Unión Cívica Radical, quien había sido elegido democráticamente para ejercer su segundo mandato en 1928. El gobierno proscribió a la Unión Cívica Radical y organizó una «salida electoral» fraudulenta y controlada por las Fuerzas Armadas que dio origen a una serie de gobiernos conservadores fraudulentos y corruptos, dirigidos por la Concordancia, nombre que tomó la alianza política formada entre el Partido Demócrata Nacional (también conocido simplemente como Partido Conservador), la Unión Cívica Radical Antipersonalista y el Partido Socialista Independiente que gobernó el país hasta 1943. Este período se caracterizó por el comienzo del nuevo modelo económico conocido como industrialización por sustitución de importaciones.
+  
+  Contexto en el cual se produce el golpe del 6 de septiembre de 1930
+  Poco antes de finalizar la Primera Guerra Mundial se produjo en Europa la Revolución rusa que estableció la Unión Soviética, organizada bajo principios comunistas. El movimiento socialista se dividió cuando los líderes de los partidos socialdemócratas apoyaron la guerra, mientras que los partidarios de la Revolución rusa de 1917 formaron partidos comunistas en la mayoría de los países industrializados (y en muchos no industrializados).
+  
+  Tras la Primera Guerra Mundial se firmó el Tratado de Versalles, creando la Organización Internacional del Trabajo integrada por gobiernos, sindicatos y organizaciones patronales, e imponiendo severas cargas económicas a Alemania que desencadenaron una gran crisis económica y humanitaria en ese país. Entre las consecuencias políticas se produjo el Levantamiento Espartaquista en enero de 1919 y en Baviera, los comunistas derrocaron el gobierno y establecieron la República Soviética de Baviera, que duró unas pocas semanas en 1919. Una vida de brevedad similar tuvieron las Repúblicas Soviéticas que surgieron en otros estados alemanes y el gobierno soviético establecido en Hungría por Béla Kun en 1919.
+  
+  Durante el gobierno radical el sindicalismo y las negociaciones colectivas entre empresas y sindicatos, tuvieron una gran expansión. La Federación Obrera Regional Argentina del IX Congreso aumentó los sindicatos afiliados de 51 en 1915 a 350 en 1918. La FORA anarquista por su parte adoptó una postura crítica hacia el gobierno radical, promoviendo escenarios insurreccionales. El radicalismo estableció inicialmente una sólida vinculación con la corriente sindicalista revolucionaria, en especial con la Federación Obrera Marítima (FOM) y la Federación Obrera Ferroviaria (FOF), que se diluyó luego de las grandes masacres obreras de 1919-1922.
+  
+  
+  Banda de la organización paramilitar fascista Liga Patriótica Argentina con apoyo policial participando en los asesinatos y pogroms de la Semana Trágica de 1919.
+  En 1919 se crean en Argentina varias organizaciones paramilitares de derecha, con amplio apoyo empresario y de la embajada de Gran Bretaña, entre las que se destacó la Liga Patriótica presidida por el dirigente radical Manuel Carlés y el almirante Manuel Domecq García, ministro de Marina del gobierno de Marcelo T. de Alvear. Las organizaciones paramilitares se fortalecerían a lo largo de la década, desfilando junto a las Fuerzas Armadas y participando de las masacres obreras y el pogrom en la Semana Trágica (1919), la Patagonia rebelde (1921/22) y las huelgas forestales en Santa Fe (1921). En 1925 el radical Manuel Carlés será uno de los primeros líderes fascistas en Argentina. Tendrán un papel muy activo en el golpe de 1930 y en la represión clandestina posterior.
+  
+  
+  Huelguistas detenidos en Tres Cerros durante la Patagonia Trágica entre 1920 y 1921.
+  A mediados de la década de 1920 aparecieron en Italia y Alemania los movimientos fascista y nazi respectivamente, que tuvieron una importante adhesión en Argentina, sobre todo en las fuerzas armadas y en los sectores de derecha y en la amplia comunidad ítaloargentina que para entonces era mayoritaria en el país. En 1922 Benito Mussolini toma el poder en Italia. El jefe del fascismo en Argentina, Vittorio Valdani, llegó a ser nombrado por el presidente Marcelo T. de Alvear como Director Administrativo de la empresa estatal YPF.
+  
+  
+  El político monárquico español Francisco Cambó fue el presidente de la CHADE, bajo cuya gestión fueron sobornados los presidentes Alvear y Justo.
+  A partir de la Primera Guerra Mundial se fortalecieron las estructuras monopólicas de la economía argentina, a favor de grandes trusts internacionales y en perjuicio de la competitividad, la innovación y los consumidores argentinos, causando deformaciones estructurales que se extenderán por décadas. En algunos casos el poder de las grandes empresas privadas impuso un esquema de corrupción política sistemática, como quedó paradigmáticamente al descubierto con el escándalo de la empresa eléctrica CHADE, de origen belga y presidida por el político español Francisco Cambó, que llegó a sobornar a los presidentes radical Marcelo T. de Alvear y conservador Agustín P. Justo.
+  
+  La crisis económica mundial de 1929 llamada Gran Depresión tuvo un profundo impacto en la Argentina. Afectó primero económicamente ya que el 80 % de los ingresos fiscales en Argentina provenían del comercio exterior. La crisis creó una situación de tensión social, con bajas de sueldo, aumento del desempleo; es decir, una contracción de la economía. Y esto generó también, en el plano político, un contexto en el cual se produce el golpe de 1930. La crisis de 1929 fue un factor que creó una situación de tensión, de malestar sobre la economía, en términos sociales y de preocupación e incertidumbre en los sectores económicos dominantes y esto contribuyó a crear este clima. En América Latina en general hubo una crisis de sistemas democráticos prácticamente en toda la región.
+  
+  
+  El uruguayo Natalio Félix Botana formó parte del grupo golpista y utilizó el popular Crítica que había fundado para desprestigiar al presidente Yrigoyen.
+  Por otra parte, la enseñanzas sociales de la Iglesia católica de la época estaban basadas en la encíclica Rerum Novarum de 1891 que versaba sobre las condiciones de las clases trabajadoras, dejaba patente su apoyo al derecho laboral de «formar uniones o sindicatos», reafirmaba en su apoyo al derecho de la propiedad privada y discutía sobre las relaciones entre el gobierno, las empresas, los trabajadores y la Iglesia, proponiendo una organización socioeconómica que más tarde se llamaría corporativismo. Recién a partir de 1931 el papa Pío XI condenó al fascismo y propuso llevar a la práctica los principios de la recta razón y de la filosofía socialcristiana.
+  
+  Las posturas nacionalistas surgidas por imitación de lo ocurrido en Italia con Benito Mussolini que apoyaban la implantación de un corporativismo provocaron la división del Partido Popular y su disolución. Fue entonces cuando los nacionalistas católicos apoyaron al semanario "La Nueva República", opositor al gobierno radical de Hipólito Yrigoyen que, en plena Gran Depresión mundial de 1929 fue muy criticado por una serie de intervenciones a provincias por decreto y asesinatos de opositores, entre ellos el del senador Lencinas,103 que produjeron el debilitamiento de la democracia104 y desencadenaron el golpe militar dirigido por el general José Félix Uriburu.
+  
+  Una vez que Hipólito Yrigoyen fue elegido presidente en 1916, comenzó a formarse dentro de la Unión Cívica Radical un amplio sector que se opuso a Yrigoyen, considerándolo autoritario. Este sector se autodenominó "antipersonalista" y llegó a formar otro partido radical denominado Unión Cívica Radical Antipersonalista con el que se presentó a las elecciones presidenciales de 1928 con la fórmula Leopoldo Melo-Vicente Gallo, saliendo segundo detrás del mismo Hipólito Yrigoyen. Derrotados en las urnas, los radicales antipersonalistas comenzaron a conspirar contra el gobierno constitucional y luego integrarían la Concordancia, que gobernó fraudulentamente entre 1932 y 1943.
+  
+  Los grupos conservadores y los medios de comunicación gráfica, también conspiraron contra el gobierno constitucional desde que fue elegido el primer presidente por voto secreto y obligatorio en 1916. El diario roquista La Prensa le había advertido a Yrigoyen en una editorial antes de asumir, que si se empeñaba en llevar adelante una política no conservadora "será batido y desalojado del poder".105 Otro factor determinante del golpe de Estado contra Yrigoyen fue el diario Crítica del uruguayo Natalio Félix Botana, que "no sólo contribuyó al derrocamiento del gobierno con acerbas críticas de su diario, sino con su participación personal en la trama que, con la conducción en la sombra del jefe del ejército Agustín Justo, culminó el 6 de septiembre de 1930".98106
+  
+  La dictadura militar de Uriburu (1930-1932)
+  Artículo principal: José Félix Uriburu
+  El 6 de septiembre de 1930, Uriburu encabezó un golpe de Estado que derrocó al gobierno constitucional Hipólito Yrigoyen y estableció una dictadura militar, la primera de una serie que se extendería hasta 1983.
+  
+  El 10 de septiembre, José Félix Uriburu fue reconocido como presidente de facto de la Nación por la Corte Suprema mediante la acordada que dio origen a la doctrina de los gobiernos de facto y que sería utilizada para legitimar a todos los demás golpes militares.107
+  
+  Uriburu básicamente representó en aquel momento ante todo un nacionalismo católico corporativista. Inclusive el proyecto de constitución neocorporativa que tenía Uriburu y sus sectores era un sistema neocorporativo mixto. Querían que hubiera una cámara corporativa, por ejemplo, con representación de sindicatos, empresarios y otra cámara con representación política. Eran proyectos neocorporativos. Ideológicamente muy tributarios del nacionalismo católico, que desde los años '20 venía creciendo en Argentina.102
+  
+  Uriburu le encomendó al poeta Leopoldo Lugones la redacción de la proclama revolucionaria, pero la primera versión fue acusada de fascista por parte del coronel José María Sarobe y el general Agustín P. Justo, que representaban el liberalismo conservador tradicional de la Argentina102
+  
+  Los discursos mencionaban continuamente la necesidad de restaurar el orden, la propiedad y las jerarquías.108 Sin embargo, a diferencia de los fascismos europeos, la derecha argentina consideraba que la clave del sistema político propuesto era el Ejército, y no organizaciones paramilitares.109
+  
+  Uriburu propuso la fundación de un Partido Nacional, al que deberían adherirse los demás partidos, aunque estaban excluidos el radicalismo yrigoyenista y posiblemente el Partido Socialista. La invitación fue rechazada por todos, salvo algunos grupos conservadores. Uriburu se había adelantado a convocar a elecciones para gobernador de Buenos Aires, confiando en presentar una candidatura única del Partido Nacional frente a los radicales; cuando su proyecto fracasó, no pudo retractarse.110
+  
+  En el mes de abril, de 1931 se celebraron las elecciones bonaerenses, con un resultado imprevisto: pese a que el gobierno consideraba al radicalismo completamente "fuera de la historia", y a que este no organizó una campaña electoral ni tenía apoyo de la prensa, el candidato radical Honorio Pueyrredón obtuvo el triunfo. Pese a que en el Colegio Electoral el radicalismo quedó varios votos por detrás y debía negociar con los socialistas para alzarse con la gobernación, el gobierno entró en pánico y la mayoría de los ministros presentó la renuncia. Uriburu reorganizó el gabinete, nombrando ministros del sector "liberal". El 8 de mayo suspendió el llamado al colegio electoral provincial, y nombró gobernador de facto de la provincia de Buenos Aires a Manuel Ramón Alvarado.111
+  
+  Pocas semanas más tarde estalló una revolución en la provincia de Corrientes, dirigida por el teniente coronel Gregorio Pomar; aunque fue rápidamente reprimida, dio a Uriburu la excusa que buscaba: clausuró todos los locales de la UCR, arrestó a docenas de dirigentes y prohibió a los colegios electorales elegir políticos vinculados directa o indirectamente con Yrigoyen; Pueyrredón había sido ministro de Yrigoyen, lo que significaba que no podía ser elegido, pero además fue expulsado del país junto con Alvear. Además suspendió las elecciones de gobernadores planeadas para las provincias de Córdoba y Santa Fe.112 En el mes de septiembre llamó a elecciones para el mes de noviembre, y poco después anuló las elecciones en Buenos Aires.113
+  
+  El experimento corporativista había fracasado, pero aun así, el 20 de febrero de 1932, horas antes de entregar el gobierno a su sucesor, Uriburu declararía que "el voto secreto es precisamente lo que ha permitido el desenfreno demagógico que hemos padecido."114
+  
+  Presidencia de Agustín P. Justo (1932-1938)
+  Artículo principal: Agustín P. Justo
+  Luego del fracaso del ensayo corporativista nacionalista católico de José Félix Uriburu gobernó la Argentina una alianza política conservadora que se denominó la «Concordancia» que fue una alianza política formada entre el Partido Demócrata Nacional (también conocido simplemente como Partido Conservador), la Unión Cívica Radical Antipersonalista y el Partido Socialista Independiente que gobernó el país durante la llamada década infame entre 1932 y 1943, a través de los presidentes Agustín P. Justo (1932-1938), Roberto M. Ortiz (1938-1940) y Ramón Castillo que debió completar el período por muerte del presidente Ortiz (1940-1943).
+  
+  Este período se caracterizó por el comienzo del nuevo modelo económico conocido como industrialización por sustitución de importaciones.
+  
+  En el plano económico, con la crisis de la bolsa, los mercados internacionales tienden a cerrar sus economías adoptando modelos de proteccionismo. Inglaterra anuncia en la "convención de Ottawa" que les dará ventajas arancelarias a sus colonias. Debido a su gran dependencia, el país firma el pacto Roca-Runciman con Inglaterra en 1933, cediendo así el sector ferroviario y otras áreas estratégicas a cambio de un trato privilegiado para las carnes argentinas. El pacto fue cuestionado por opositores e historiadores,* 1 considerando que afectaba gravemente la soberanía nacional y citando la declaración pública del vicepresidente de la Nación mientras negociaba el tratado, en la que afirmó que "desde el punto de vista económico, (Argentina es) una parte integrante del Imperio Británico".115
+  
+  Ante esta crisis del modelo agroexportador argentino, a mediados de la década se inició un proceso de industrialización por sustitución de importaciones, con su eje principal en Buenos Aires, acompañado de una ola migratoria interna, del campo a las ciudades y del interior a la capital.
+  
+  En este período la Unión Cívica Radical, conducida por Marcelo Torcuato de Alvear, será sistemáticamente excluida del acceso al gobierno mediante el uso abierto del fraude electoral y la represión. En el seno del radicalismo aparecieron fuertes corrientes nacionalistas yrigoyenistas que se expresaron en la fundación del influyente grupo FORJA, y en los primeros núcleos de la intransigencia radical, que conducirá en la UCR en la década siguiente y que por entonces comenzaba a nuclearse alrededor de Amadeo Sabattini, gobernador de Córdoba (1936-1940).
+  
+  Por su parte el Partido Socialista y sobre todo su aliado el Partido Demócrata Progresista, conducido por Lisandro de la Torre, denunciarán en el Congreso los sucesivos actos de corrupción en beneficio de una élite realizados por el régimen, que incluso causarán el asesinato del senador Enzo Bordabehere en el recinto del Senado.
+  
+  Finalmente, en ese período, el movimiento obrero argentino se organizó en la Confederación General del Trabajo (CGT), sobre el sindicato de actividad y nuevas ideas nacionalistas y de relaciones con los partidos políticos populares.
+  
+  Presidencia de Roberto Ortiz (1938-1942)
+  Hacia 1939 cuando comenzó la Segunda Guerra Mundial, Argentina estaba gobernada por el presidente radical antipersonalista Roberto Ortiz, que había sido ministro del presidente radical (UCR) Marcelo T. de Alvear. Durante su gobierno Argentina influyó decisivamente en la paz alcanzada entre Paraguay y Bolivia que se habían enfrentado en la Guerra del Chaco. La tradicional política neutralista y de no beligerancia se mantendría hasta 1944.
+  
+  Presidencia de Ramón Castillo (1942-1943)
+  En 1942, debido a la enfermedad del presidente Ortiz, asumió el vicepresidente Ramón Castillo, hasta 1943, en que sería derrocado. Su presidencia estuvo marcada por las presiones de Estados Unidos para que Argentina abandonara su tradicional posición neutralista y le declarara la guerra a las potencias del Eje,116 cosa que efectivamente iba a suceder durante la presidencia de Edelmiro Farrell (27 de marzo de 1945).
+  
+  Reclamaciones antárticas y toma de posesión formal del territorio continental antártico
+  En 1939 la Argentina crea transitoriamente para asistir a una invitación noruega a la Comisión Nacional del Antártico mediante el decreto N.º 35821, pero por el decreto N.º 61852 del 30 de abril de 1940 pasó a ser un organismo permanente con el objeto de intensificar las investigaciones en la zona. Se realizaron exploraciones, tareas científicas, relevamiento de terreno y balizamiento.
+  
+  El 6 de noviembre de 1940 Chile estableció por decreto los límites de sus reclamaciones antárticas.
+  Forman la Antártica Chilena o Territorio Chileno Antártico, todas las tierras, islas, islotes, arrecifes, glaciares y demás conocidos y por conocer, y el mar territorial respectivo, existentes dentro de los límites del casquete constituido por los meridianos 53°, longitud oeste de Greenwich, y 90°, longitud oeste de Greenwich.
+  La Argentina protestó formalmente por el decreto chileno mediante nota del 12 de noviembre de 1940, rechazando su validez y expresando una potencial reclamación a la misma área.117 A su vez, el Reino Unido protestó el 25 de febrero de 1941.
+  
+  En octubre de 1941 el Instituto Geográfico Militar argentino publicó mapas que mostraban la extensión de la futura reclamación argentina entre los 25° O y 75° O.
+  
+  En enero de 1942 la Argentina, de acuerdo con la teoría de los sectores polares, declaró sus derechos antárticos entre los meridianos 25° y 68° 24' Oeste (el de punta Dungeness). Lo que dio lugar a un memorándum de respuesta del Gobierno chileno del 3 de marzo de 1942, reservando sus derechos.
+  
+  La Argentina realizó en la isla Decepción su toma de posesión formal del territorio continental antártico el 8 de noviembre de 1942, mediante la colocación de un cilindro que contenía un acta y una bandera dejados allí por una expedición al mando del capitán de fragata Alberto J. Oddera. En enero de 1943 personal del barco británico HMS Carnarvon Castle destruyó las evidencias de la toma de posesión argentina, plantó la bandera británica y envió a Buenos Aires el acta. El 5 de marzo de ese año el buque argentino ARA 1° de Mayo removió la bandera británica.118
+  
+  Artículo principal: Antártida Argentina
+  Véase también: Campañas antárticas argentinas
+  El peronismo (1943-1955)
+  Antecedentes: la Revolución del 4 de junio de 1943 (1943-1946)
+  Artículo principal: Revolución del 43
+  
+  Arturo Rawson, Pedro Pablo Ramírez y Edelmiro Farrell, los tres generales presidentes de la Revolución del 43
+  El 4 de junio de 1943 se produjo un nuevo golpe militar encabezado por los generales Arturo Rawson y Pedro Pablo Ramírez y apoyado por varios sectores militares entre los que se destacaba una agrupación de militares del Ejército denominado GOU (Grupo de Oficiales Unidos), integrado por unos veinte oficiales mayoritariamente jóvenes de ideologías diversas que compartían un enfoque nacionalista. El golpe derrocó al presidente Ramón Castillo quien fue reemplazado por el general Arturo Rawson, quien tres días después fue reemplazado a su vez por el general Pedro Pablo Ramírez.
+  
+  La Revolución del 43 contenía en su interior diversos sectores que lucharon entre sí para controlar la dirección del proceso. Uno de esos sectores estuvo liderado por el entonces coronel Juan Domingo Perón, quien ocupó inicialmente un cargo de menor significación como secretario del Ministerio de Guerra, en cabeza del general Edelmiro Farrell. A partir de la segunda mitad de 1943 comenzó una política de alianza con el movimiento sindical que le permitiría ir ocupando posiciones cada vez más influyentes en el gobierno militar. En ese camino resultó fundamental su designación a cargo del irrelevante Departamento de Trabajo, elevado luego al nivel de Secretaría de Estado.
+  
+  A comienzos de 1944 el gobierno militar rompió relaciones diplomáticas con los países del Eje, decisión que llevó a un enfrentamiento entre sus sectores internos y a exigir la renuncia del presidente Ramírez, quien fue reemplazado por el general Edelmiro Farrell, pasando Perón a ocupar el Ministerio de Guerra que dejó aquel. Farrell se apoyó en Perón y su exitosa política laboral-sindical y sufrió el embate del sector nacionalista de derecha liderado por el ministro del Interior, el general Luis César Perlinger. En la segunda mitad del año el dúo Farrell-Perón consolidó su posición, desplazando al sector de la derecha nacionalista católica-hispanista, y profundizó las reformas laborales generalizando la negociación colectiva, sancionando el Estatuto del Peón de Campo que laboralizó la situación de los trabajadores rurales, creando los tribunales de trabajo y estableciendo la jubilación para los empleados de comercio. También se tomaron importantes medidas industrialistas como la creación del Banco Industrial de Crédito.
+  
+  A partir del segundo semestre de 1943 se estableció en el gobierno un grupo integrado principalmente por sindicatos socialistas y sindicalistas revolucionarios liderado por el coronel Juan Domingo Perón, que logró ocupar primero el pequeño Departamento de Trabajo, para irse fortaleciendo progresivamente, mediante una acción encaminada a defender los derechos de los trabajadores y promover el protagonismo sindical. Las principales medidas laborales fueron:
+  
+  El Estatuto del Peón, que estableció un salario mínimo y procuró mejorar las condiciones de alimentación, vivienda y trabajo de los trabajadores rurales.
+  El establecimiento del seguro social y la jubilación que benefició a 2 millones de personas.
+  La creación de Tribunales de Trabajo, cuyas sentencias, en líneas generales, resultaron favorables a las demandas obreras.
+  La fijación de mejoras salariales y el establecimiento del aguinaldo para todos los trabajadores.
+  El reconocimiento de las asociaciones profesionales, con lo cual el sindicalismo obtuvo una mejora sustancial de su posición en el plano jurídico.
+  En 1945 el embajador de los Estados Unidos Spruille Braden organizó un fuerte movimiento que se identificó como antiperonista [¿por quién?], que produjo a su vez que amplios sectores sindicales, hasta entonces socialistas y sindicalistas revolucionarios -y en menor medida anarquistas y comunistas-, se identificaran como peronistas. El enfrentamiento entre ambos grupos derivó en un golpe de Estado [cita requerida] antiperonista el 9 de octubre de 1945, desplazando a los sindicalistas del gobierno y deteniendo a Perón. Como respuesta, el 17 de octubre de 1945 se produjo una gran movilización de obreros y sindicalistas en la Plaza de Mayo, que exigieron y obtuvieron la liberación de Perón y el compromiso de la dictadura de llamar a elecciones.
+  
+  A partir de entonces ambos bandos se prepararon para enfrentarse en elecciones el 24 de febrero de 1946 triunfando Juan Perón y como vicepresidente el radical Hortensio Quijano -candidatos de los partidos Laborista, Unión Cívica Radical Junta Renovadora e Independiente-, contra la fórmula de la Unión Democrática integrada por los radicales José P. Tamborini-Enrique Mosca.
+  
+  El primer gobierno de Juan D. Perón (1946-1952)
+  
+  Juan Domingo Perón: el mayor líder popular de la historia argentina.
+  Artículo principal: Primer gobierno de Perón
+  En las elecciones de 1946 Perón se presentó como candidato de tres partidos aliados: el Partido Laborista, organizado por los sindicatos, la Unión Cívica Radical Junta Renovadora y el Partido Independiente, de tendencia conservadora. Su vicepresidente fue Hortensio Quijano, un radical de la disidente Unión Cívica Radical Junta Renovadora. Las elecciones polarizaron al país: por un lado el peronismo, los sindicalistas de la CGT y grupos yrigoyenistas del radicalismo, UCR Junta Renovadora o FORJA (Donde se encontraban reconocidas personalidades como Arturo Jauretche, Raúl Scalabrini Ortiz, etc.), y de los conservadores de las provincias del interior y por el otro la Unión Democrática que contaba con la participación de la UCR y los partidos Socialista y Demócrata Progresista y el apoyo del Partido Comunista, los conservadores de la provincia de Buenos Aires y el embajador de los Estados Unidos, Spruille Braden. En las elecciones triunfó Perón, con el 52 % de los votos.
+  
+  Tras asumir la presidencia se fusionaron los partidos que llevaron la candidatura de Perón, formando el Partido Peronista —llamado brevemente Partido Único de la Revolución, y hoy conocido como Partido Justicialista— y luego de obtenido el sufragio femenino, en 1949 Eva Perón organizó el Partido Peronista Femenino. Se estableció un criterio de cupos por el cual los cargos políticos se repartían en partes iguales entre los sindicatos, el sector político del Partido Peronista y las mujeres.
+  
+  En 1947 la Cámara de Diputados inició un juicio político contra los miembros de la Corte Suprema que habían legitimado los golpes de estado de 1930 y 1943, resultando removidos de sus cargos.
+  
+  En 1949 se convocó elecciones para la Asamblea Constituyente que dictó una nueva Constitución acorde con los principios del constitucionalismo social y el peronismo, estableciendo, entre otras cosas la igualdad jurídica de hombres y mujeres, los derechos de los trabajadores, los derechos de la ancianidad, la autonomía universitaria, la función social de la propiedad y las facultades de intervención del Estado en la economía, así como la reelección presidencial inmediata, que Perón aprovechó en 1951. Según opositores, esta reelección sucesiva, previamente prohibida por el artículo 77, fue la principal intención de la reforma constitucional.119
+  
+  El primer gobierno peronista amplió los derechos laborales y sociales, de las mujeres, de las personas que vivían en los territorios nacionales, de los ancianos, de los niños, de los sectores vulnerables y promovió la industrialización del país. En materia laboral se creó el Ministerio de Trabajo y Previsión Social y por primera vez en la historia argentina la retribución del trabajo superó a la retribución del capital.120 Con respecto a los derechos de las mujeres, se sancionó la ley del voto femenino en 1947. Con respecto a los territorios cuyos habitantes tenían sus derechos políticos restringidos, en 1951 el Congreso Nacional aprobó la ley 14307 provincializando los territorios nacionales del Chaco y La Pampa que por decisión de las convenciones constituyentes elegidas por los pueblos de esas provincias adoptaron los nombres de Provincia Presidente Perón y Provincia Eva Perón, respectivamente. En materia de seguridad social ("previsión social") se masificó la cobertura, pasando de 397 000 afiliados en 1939 a 2 327 946 en 1949,121 a la vez que Eva Perón realizó una amplia obra asistencia social a los sectores más vulnerables, desde la Fundación Eva Perón cuyos fondos provenían de aportes de distinta índole: estaban los obligatorios impuestos por leyes nacionales sobre los jornales de los obreros argentinos dos veces al año y las donaciones de empresas privadas, aparentemente voluntarias pero constituyendo en la práctica casi un requisito para funcionar sin problemas con el gobierno peronista.122123 También recibía fondos del Estado y utilizaba inmuebles, personal y medios de transporte del mismo. Un decreto del Poder Ejecutivo dispuso que los sobrantes de las partidas de cada ministerio se transfiriera a la Fundación y pese a que fue objetado por el Tribunal de Cuentas igual fue aplicado.124En materia de salud se creó el Ministerio de Salud Pública a cargo de Ramón Carrillo, desde la cual se realizaron campañas para eliminar el paludismo, la fiebre amarilla y las enfermedades venéreas, programas de vacunación masiva (antivariólica y antidiftérica), producción nacional de medicamentos y reducción de su costo y construcción de hospitales.125 En materia económica se nacionalizaron sectores básicos como los ferrocarriles, el servicio telefónico, las líneas aéreas, el comercio exterior, la flota mercante, el sector siderúrgico pesado y se impulsó la industrialización. En política internacional el ministro Juan Atilio Bramuglia, de extracción sindical, implementó una política de neutralidad en la Guerra Fría que denominó "la tercera posición" y una política de alianzas regional con Bolivia, Brasil, Paraguay y Chile.126 En educación se promovió la educación técnica, se creó la Universidad Obrera Nacional (luego renombrada Universidad Tecnológica Nacional) y se estableció la gratuidad de la enseñanza universitaria.127128
+  
+  Tras 15 años de democracias restringidas e intervenciones militares sobre los gobiernos civiles, en 1946 el Congreso sancionó una nueva Ley de Educación Superior que puso a las universidades bajo la órbita de las reglas de una democracia sin proscripción. Para eso, y marcando un hito en la historia de la legislación sobre educación superior, el peronismo dictó en 1947 la Ley N.º 13 031, denominada Ley Guardo, en honor al diputado justicialista creador de su articulado. Esta legislación puso punto final a la larga vigencia de los cuatro artículos de la reducida Ley N.º 1597 de 1885, «Ley Avellaneda», que ofició de marco legal hasta entonces.
+  
+  En 1949, con la intención de atender a algunos planteos de los universitarios, incorporar avances de la ley sancionada en 1947 y sentar las bases para una nueva ley, se incorporó un artículo en la Constitución Nacional de 1949. En 1954 se sancionó una nueva ley, la 14 297. En ella se incorporaron algunos otros postulados de la Reforma Universitaria, como la definición de la extensión y la participación directa de los estudiantes. Esta ley profundizó la participación estudiantil en el gobierno de las facultades, otorgándoles el derecho al voto.129
+  
+  Polarización entre peronistas y antiperonistas
+  Los dos primeros gobiernos peronistas estuvieron marcados por la extrema polarización de la sociedad entre antiperonistas y peronistas, así como por la acción de sectores no peronistas ni antiperonistas, apoyando a uno u otro bando o a ninguno. Andrés Avellaneda y Alejandra Giuliani hablan de la historiografía antiperonista que se hizo dominante a partir de la dictadura antiperonista de 1955,130 señalando sus mitos,131 y su interpretación restringida de los hechos al desconocer la autonomía de los diversos grupos que integraron la alianza peronista.130 En el mismo sentido se orientan las investigaciones del historiador israelí Raanan Rein, poniendo el acento en el estudio de las características especiales de los dirigentes de segunda línea del peronismo y las particularidades regionales.132 En 2003 el dirigente peronista Antonio Cafiero reprochó la interpretación de los hechos que hacía uno de los principales historiador antiperonistas, Hugo Gambini, por no tener en cuenta el contexto histórico en el que sucedieron esos hechos.133
+  
+  El gobierno peronista y la justicia detuvieron dirigentes de la oposición acusándolos de cometer delitos, participar en actos terroristas e intentos de golpes de Estado. Ricardo Balbín, diputado de la Unión Cívica Radical fue desaforado por la Cámara de Diputados de la Nación y detenido por orden judicial, acusado de haber cometido el delito de desacato. El general Alejandro Agustín Lanusse fue detenido por su participación en el intento de golpe de Estado de 1951. Los dirigentes de la Unión Cívica Radical Roque Carranza y Arturo Mathov fueron detenidos por haber asesinado a siete personas y herir a más de cien en el atentado en la Plaza de Mayo del 15 de abril de 1953, siendo a su vez torturados por la Policía Federal.
+  
+  Hugo Gambini y Silvia Mercado señalan que el gobierno negó el acceso a la radio y televisión a los dirigentes no peronistas hasta dos meses antes de su derrocamiento.
+  
+  En esos años «la radio» eran una gran cantidad de emisoras privadas instaladas en la mayoría de las grandes ciudades del país, mientras que «la televisión» era un canal estatal, que inició sus transmisiones en 1951. Mirta Varela señala que "Perón llegó al gobierno toda la prensa en contra" y que durante la campaña electoral, los grandes diarios nacionales y la radio, prácticamente no otorgaron espacio a las actividades del frente peronista, difundiendo una simbología que presentaba a los peronistas como «invasores» y expresiones como "las patas en la fuente" para referirse a las personas que se refrescaban, evitando los nombres de Perón y Evita, anticipando una política de exclusión del peronismo de los medios de comunicación que establecería por ley la dictadura antiperonista después de 1955.
+  
+  Celso Ramón Lorenzo cuenta que los locales partidarios de la oposición eran atacados, la policía reprimía sus actos públicos y se perseguía a los militantes. El gobierno usaba la figura del "desacato contra la investidura presidencial" para procesar incluso a diputados de la oposición.
+  
+  El gobierno clausuró una gran cantidad de diarios opositores, sobre todo en las ciudades del interior, en algunos casos mediante la Comisión Visca, una comisión del bicameral del Congreso Nacional presidida por el diputado José Emilio Visca, un exconservador devenido peronista. Visca era secundado por el diputado también peronista Rodolfo Decker. La comisión fue creada en 1949 para investigar las denuncias de torturas aplicadas a opositores, pero que en lugar de ello se dedicó a investigar y clausurar medios de prensa que no respondieran al gobierno, con las excusas más insignificantes o esgrimiendo "razones de seguridad, higiene y moralidad" y así un baño en malas condiciones era suficiente causa... En su estudio sobre la relación de peronismo con los medios de comunicación, Mirta Varela contextualiza el conflicto poniendo de relieve la confrontación de "toda la prensa" contra el peronismo, frecuentemente con información decididamente parcial y discriminación de clase, desde la campaña electora de 1946, contextualizando el conflicto. El historiador Félix Luna cuestionó duramente la conducta de los medios de prensa en aquel momento:
+  
+  Desde el punto de vista de la ética periodística, la posición de la prensa independiente fue condenable. El castigo a este sectarismo llegó por sí mismo: la deformación de la realidad fue tan completa que todos, los que escribían y los que leían, llegaron a convencerse de que la imagen presentada era cierta; que la Unión Democrática representaba la arrasadora mayoría del país frente a minúsculas turbas despreciables.
+  Félix Luna
+  Persiguió a sindicalistas opositores, removió a los profesores disidentes de las universidades, utilizó recursos del Estado para la actividad del Partido Peronista impulsó un culto a la personalidad de Perón y Eva Perón desde los libros de lectura en la escuela primaria hasta la designación con nombres alusivos al peronismo tales como Eva Perón, Juan Domingo Perón, el ministro Juan Pistarini, 26 de julio, 8 de octubre (cumpleaños de Perón), 7 de mayo (cumpleaños de Eva Perón) y 17 de octubre (fecha de la manifestación obrera que exigió a la dictadura militar la liberación de Perón), de calles, estaciones de tren y subterráneo, ciudades y plazas[cita requerida], buques de guerra e instalaciones y unidades militares, etc., obligó a los empleados públicos a ser afiliados al Partido Peronista. impulsó a la Confederación General Universitaria (CGU) como representante de los estudiantes peronistas en oposición a la Federación Universitaria Argentina (FUA), de tendencia antiperonista.
+  
+  El israelí Raanan Rein cuestiona la tendencia de una parte de historiografía argentina por haber "mordido el anzuelo" de la retórica populista, aceptando como un hecho la relación directa entre Perón y sus seguidores, sin tener en cuenta la autonomía de los diferentes poderes, grupos, segundas líneas y manifestaciones regionales del movimiento.
+  
+  En 1951 el gobierno peronista decidió enviar al Congreso Nacional un proyecto para provincializar los territorios nacionales de La Pampa y Chaco, cuyos habitantes carecían de derecho a elegir y ser elegidos. Para constituirse como tales, las poblaciones de las nuevas provincias eligieron convenciones constituyentes, ganando la mayoría el Partido Peronista. Las constituciones provinciales siguieron los líneamientos del constitucionalismo social y de la reforma constitucional argentina de 1949, estableciendo entre otras normas los derechos de los trabajadores, de la ancianidad y la igualdad jurídica entre varones y mujeres. En dichas constituciones los convencionales dispusieron nombrar al exterritorio de La Pampa como Provincia Eva Perón y al exterritorio del Chaco como Provincia Presidente Perón.
+  
+  Grupos de oposición antiperonista, entre ellos sectores militares, principalmente de la Marina, de la Unión Cívica Radical, del partido conservador, de la Iglesia católica, de organizaciones de extrema derecha y del Partido Socialista, impulsaron acciones de desestabilización institucional, organizaron comandos civiles armados, organizaron el golpe de Estado en 1951, realizaron el atentado terrorista en la Plaza de Mayo del 15 de abril de 1953 matando a siete personas e hiriendo a otras cien, organizaron el bombardeo de Plaza de Mayo -uno de los participantes fue el alto dirigente radical Miguel Ángel Zavala Ortiz- asesinando a 308 personas y un número indeterminado de víctimas que no pudieron ser reconocidas y realizaron el golpe de Estado de 1955 para imponer una dictadura militar, que derogó por proclama militar la Constitución de 1949 e impuso un régimen represivo con el objetivo declarado de "desperonizar" el país, fusilando, encarcelando y persiguiendo a dirigentes políticos y sindicales peronistas, cesanteando a profesores peronistas, suspendiendo a deportistas que tuvieran ideas peronistas y estableciendo listas negras para los artistas peronistas.
+  
+  El intento de golpe de Estado del 28 de septiembre de 1951
+  Artículo principal: Golpe de Estado del 28 de septiembre de 1951
+  Véase también: Golpes de Estado en Argentina
+  El 28 de septiembre de 1951 efectivos del Ejército, la Armada y la Fuerza Aérea al mando del general retirado Benjamín Menéndez intentaron derrocar al gobierno del presidente Juan Domingo Perón. En su breve proclama los rebeldes acusaban al gobierno de haber llevado la Nación a «una quiebra total de su crédito interno y externo, tanto en lo moral y espiritual como en lo material». Las restricciones a las libertades cívicas y a la acción de los opositores, la reforma constitucional que permitía la reelección del presidente, así como las medidas de politización de las fuerzas armadas parecen haber influido en los militares adherentes al movimiento.
+  
+  Algunos sectores descontentos de las fuerzas armadas entraron en un estado deliberativo para destituir al gobierno y buscaron un líder para encabezar la rebelión. Los que podían asumir ese papel eran los generales Eduardo Lonardi, el único militar no oficialista con mando de tropas, que estaba como comandante del Primer Cuerpo de Ejército y el general Benjamín Menéndez, retirado desde 1942, pero no pudieron acordar una acción en común, separados en palabras de Potash con las que coincide Luna- por “la dignidad personal, el orgullo y la ambición”.
+  
+  Viendo un momento político favorable Menéndez dio la orden de desencadenar el golpe el 28 de septiembre y Lonardi que había pedido su retiro, que le fue aceptado de inmediato- decidió no adherir al golpe pero dejó en libertad a sus seguidores, parte de los cuales apoyaron el mismo. En la madrugada de ese día Menéndez y su estado mayor entraron a Campo de Mayo, una instalación militar de gran extensión, donde ya había unidades sublevadas. Se produjo en el regimiento de tanques un tiroteo que ocasionó el único muerto, el cabo Miguel Farina que había intentado oponerse. De los treinta tanques presentes, solo pudieron movilizar a dos probablemente por sabotaje de los suboficiales- y el resto fue abandonado, por lo que en definitiva la columna golpista partió al mando del general Menéndez con dos tanques Sherman, tres unidades blindadas y 200 efectivos a caballo.
+  
+  No obtuvo el apoyo esperado del Colegio Militar de la Nación y el destacamento mecanizado de La Tablada que también se había rebelado se rindió sin combatir ante tropas leales al gobierno por lo que Menéndez junto con algunos de sus oficiales se entregó detenido.
+  
+  Por otra parte, la escuadra aeronaval y la base militar de Punta Indio, que se habían sublevado, al conocer que carecían de fuerzas terrestres desistieron de su acción y algunos de los intervinientes fueron detenidos y otros escaparon.
+  
+  Los militares golpistas fueron detenidos y enjuiciados. Perón y Lucero impulsaron en cambio optaron por aplicar sanciones moderadas. Menéndez fue condenado a 15 años de prisión; Rodolfo Larcher, Armando Repetto y Julio Rodolfo Alsogaray, fueron condenados seis años de reclusión; a cuatro años el capitán Alejandro Agustín Lanusse, Gustavo Martínez Zuviría, Víctor Salas y Costa Paz; fueron sancionados a tres años Manuel Raymúndez y Rómulo Menéndez y a un año Luis Prémoli, Ricardo Echeverry Boneo y Manuel Rojas Silveyra. Ninguno de ellos perdió su grado militar. Los sectores más duros del peronismo, liderados por Eva Perón, sostenían que los delitos cometidos -que incluían un homicidio-, debieron haber sido sancionados severamente, con pérdida de los grados militares y aplicación de la pena de muerte en los casos más graves. El historiador radical Félix Luna opinó que Perón aprovechó el intento del golpe para depurar las fuerzas armadas, desprendiéndose mediante su retiro de oficiales que no habían sido parte de la rebelión.
+  
+  El jefe de la aviación naval, capitán de navío Vicente Baroja escapó al Uruguay y desde allí declaró:
+  
+  Habíamos confiado en derrocar al tirano con pequeñas acciones, sin derramamiento de sangre. La lección fue que era preciso llegar al derramamiento de sangre para voltearlo.
+  Capitán de navío Vicente Baroja
+  El segundo gobierno de Juan D. Perón (1952-1955)
+  En 1949, Perón reformó la Constitución de 1853, de manera que pudo ser reelegido en las elecciones de 1951. Por primera vez en la historia del país las mujeres ejercieron su derecho al voto. En noviembre, Perón volvió a triunfar en las elecciones por un amplio margen (62,49%).
+  
+  En ese año, Eva Perón intentó acceder a la nominación a la vicepresidencia de lo que sería el segundo mandato presidencial de Perón. Si bien contaba con el respaldo de la CGT,[cita requerida] la oposición militar y su estado de salud la condujeron a su célebre renunciamiento en un acto multitudinario en la avenida 9 de julio. Evita murió de un cáncer uterino a la edad de 33 años en 1952. Su cuerpo fue embalsamado y mantenido en exposición hasta que el golpe militar expulsó a su marido del poder en 1955. Clandestinamente fue enviado el cadáver a Italia y enterrada en Milán con nombre falso. En 1972 fue devuelto a su esposo. Sus restos reposan en el cementerio de La Recoleta en Buenos Aires.
+  
+  El peronismo contó con una amplia adhesión de los sectores populares a partir de entonces, pero a su vez produjo una profunda polarización entre los peronistas y los antiperonistas. Evita finalmente muere el 26 de julio de 1952, con tán solo 33 años de edad, luego de que Perón inicie su segundo mandato. Su funeral marcó un hito en la historia argentina: recibió los honores de un presidente en ejercicio, su cortejo fúnebre fue presenciado en las calles de Buenos Aires por casi tres millones de personas, y su funeral duró dieciséis días. El Congreso la declaró Jefa Espiritual de la Nación Argentina.
+  
+  `,
 ];
 
 export const mockGroupedSupabaseAIDBData: SupabaseData[][] = [
@@ -673,7 +880,7 @@ export const mockGroupedSupabaseAIDBData: SupabaseData[][] = [
         description:
           'Noise-canceling headphones for immersive audio experience.',
       },
-      data_chunk: null,
+      data_chunk: '',
       ai_table_name: 'test1',
       tokens: 36,
       embedding: [],
@@ -691,7 +898,7 @@ export const mockGroupedSupabaseAIDBData: SupabaseData[][] = [
         description:
           'Comfortable and stylish running shoes for active lifestyles.',
       },
-      data_chunk: null,
+      data_chunk: '',
       ai_table_name: 'test1',
       tokens: 36,
       embedding: [],
@@ -708,7 +915,7 @@ export const mockGroupedSupabaseAIDBData: SupabaseData[][] = [
         category: 'Kitchen Appliances',
         description: 'Powerful blender for making smoothies and more.',
       },
-      data_chunk: null,
+      data_chunk: '',
       ai_table_name: 'test1',
       tokens: 36,
       embedding: [],
@@ -725,7 +932,7 @@ export const mockGroupedSupabaseAIDBData: SupabaseData[][] = [
         category: 'Kitchen Appliances',
         description: 'Automatic coffee maker for your morning brew.',
       },
-      data_chunk: null,
+      data_chunk: '',
       ai_table_name: 'test1',
       tokens: 35,
       embedding: [],
@@ -743,7 +950,7 @@ export const mockGroupedSupabaseAIDBData: SupabaseData[][] = [
         description:
           'Next-gen gaming console for immersive gaming experiences.',
       },
-      data_chunk: null,
+      data_chunk: '',
       ai_table_name: 'test1',
       tokens: 35,
       embedding: [],
@@ -762,7 +969,7 @@ export const mockGroupedSupabaseAIDBData: SupabaseData[][] = [
         category: 'Electronics',
         description: 'High-quality digital camera for photography enthusiasts.',
       },
-      data_chunk: null,
+      data_chunk: '',
       ai_table_name: 'test1',
       tokens: 34,
       embedding: [],
@@ -779,7 +986,7 @@ export const mockGroupedSupabaseAIDBData: SupabaseData[][] = [
         category: 'Fashion',
         description: 'Stylish and functional backpack for everyday use.',
       },
-      data_chunk: null,
+      data_chunk: '',
       ai_table_name: 'test1',
       tokens: 34,
       embedding: [],
@@ -796,7 +1003,7 @@ export const mockGroupedSupabaseAIDBData: SupabaseData[][] = [
         category: 'Electronics',
         description: 'Lightweight ebook reader for avid readers.',
       },
-      data_chunk: null,
+      data_chunk: '',
       ai_table_name: 'test1',
       tokens: 34,
       embedding: [],
@@ -813,7 +1020,7 @@ export const mockGroupedSupabaseAIDBData: SupabaseData[][] = [
         category: 'Electronics',
         description: 'Powerful laptop with high-performance specifications.',
       },
-      data_chunk: null,
+      data_chunk: '',
       ai_table_name: 'test1',
       tokens: 33,
       embedding: [],
@@ -830,7 +1037,7 @@ export const mockGroupedSupabaseAIDBData: SupabaseData[][] = [
         category: 'Electronics',
         description: 'The latest smartphone with advanced features.',
       },
-      data_chunk: null,
+      data_chunk: '',
       ai_table_name: 'test1',
       tokens: 33,
       embedding: [],
@@ -860,6 +1067,7 @@ export const mockGroupedDataObjects: GroupedDataObject[] = [
         formatted_data:
           'Id: 1\n\nName: Laptop\n\nCategory: Electronics\n\nPrice: 999.99\n\nDescription: Powerful laptop with high-performance specifications.',
         embedding: [],
+        data_chunk: '',
       },
       {
         tokens: 33,
@@ -877,6 +1085,7 @@ export const mockGroupedDataObjects: GroupedDataObject[] = [
         formatted_data:
           'Id: 2\n\nName: Smartphone\n\nCategory: Electronics\n\nPrice: 699.99\n\nDescription: The latest smartphone with advanced features.',
         embedding: [],
+        data_chunk: '',
       },
     ],
   },
@@ -900,6 +1109,7 @@ export const mockGroupedDataObjects: GroupedDataObject[] = [
         formatted_data:
           'Id: 3\n\nName: Headphones\n\nCategory: Electronics\n\nPrice: 99.99\n\nDescription: Noise-canceling headphones for immersive audio experience.',
         embedding: [],
+        data_chunk: '',
       },
     ],
   },
@@ -922,6 +1132,7 @@ export const mockGroupedDataObjects: GroupedDataObject[] = [
         formatted_data:
           'Id: 4\n\nName: Coffee Maker\n\nCategory: Kitchen Appliances\n\nPrice: 49.99\n\nDescription: Automatic coffee maker for your morning brew.',
         embedding: [],
+        data_chunk: '',
       },
       {
         tokens: 34,
@@ -940,6 +1151,7 @@ export const mockGroupedDataObjects: GroupedDataObject[] = [
         formatted_data:
           'Id: 5\n\nName: Digital Camera\n\nCategory: Electronics\n\nPrice: 499.99\n\nDescription: High-quality digital camera for photography enthusiasts.',
         embedding: [],
+        data_chunk: '',
       },
     ],
   },
@@ -963,6 +1175,7 @@ export const mockGroupedDataObjects: GroupedDataObject[] = [
         formatted_data:
           'Id: 6\n\nName: Running Shoes\n\nCategory: Footwear\n\nPrice: 79.99\n\nDescription: Comfortable and stylish running shoes for active lifestyles.',
         embedding: [],
+        data_chunk: '',
       },
     ],
   },

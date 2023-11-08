@@ -4,7 +4,12 @@ import dotenv from 'dotenv';
 // Middlewares
 import checkToken from '@middlewares/auth';
 // Routes
-import { test } from '@routes';
+import {
+  addDataRoute,
+  dataManagerRoute,
+  dataResponderRoute,
+  test,
+} from '@routes';
 // Utils
 import { niceLog } from '@utils/niceLog';
 
@@ -33,8 +38,13 @@ for (const envVariable of requiredEnvVariables) {
 const app = express();
 const port = process.env.PORT || 3000;
 
+// Middleware
 app.use(checkToken);
+// Routes
 app.use(test);
+app.use(dataManagerRoute);
+app.use(dataResponderRoute);
+app.use(addDataRoute);
 
 const server = app.listen(port, () => {
   const addressInfo = server.address();

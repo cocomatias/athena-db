@@ -20,6 +20,9 @@ import {
 // import { OpenAIEmbeddings } from '@utils/api/OpenAIEmbeddings';
 import { DataChunks } from '@utils/api/DataChunks';
 import { DataManager } from '@utils/api/DataManager';
+import { setupRoute } from '@utils/api/setupRoute';
+import { QuestionAssigner } from '@utils/api/QuestionAssigner';
+import { DataResponder } from '@utils/api/DataResponder';
 // import { Data } from '@utils/api/Data';
 
 const router = Router();
@@ -58,101 +61,31 @@ class TestRoute extends BaseRoute {
     // Test Get DataChunks
     const supabaseDataChunks = await sb.getData({
       table_name: 'ai_db_data_chunk',
-      ai_table_name: 'test',
+      ai_table_name: 'history-of-argentina',
     });
     this.returnResponse(supabaseDataChunks);
-
-    // Test Insert DB Data
-    // const insertedData = await sb.insertData({
-    //   table_name: 'ai_db_data',
-    //   data: dbData,
-    // });
-    // this.returnResponse(insertedData);
-
-    // Test addData method from DataManager
-    // const newData: AddDataParams = {
-    //   data: mockDBDataWithoutTokens,
-    //   ai_table_name: 'test1',
-    // };
-    // const data = await dm.addData(newData);
-    // this.returnResponse(data);
-
-    // Test createDataChunk method from DataManager
-    // const dataChunk = await dm.createDataChunks({
-    //   data: mockGroupedSupabaseAIDBData.flat(),
-    //   ai_table_name: 'test1',
-    // });
-
-    // this.returnResponse(dataChunk);
   };
 }
 
 class TestRoute2 extends BaseRoute {
   execute = async () => {
-    const dm = new DataManager({ verbose: true });
-    const dataTest = [
-      {
-        ai_table_name: 'test',
-        data: mockDBDataWithoutTokens[0],
-      },
-      {
-        ai_table_name: 'test',
-        data: mockDBDataWithoutTokens[1],
-      },
-      {
-        ai_table_name: 'test1',
-        data: mockDBDataWithoutTokens[2],
-      },
-      {
-        ai_table_name: 'test2',
-        data: mockDBDataWithoutTokens[3],
-      },
-      {
-        ai_table_name: 'test2',
-        data: mockDBDataWithoutTokens[4],
-      },
-      {
-        ai_table_name: 'test4',
-        data: mockDBDataWithoutTokens[5],
-      },
-    ];
-
-    const bigDataTest = [
-      {
-        ai_table_name: 'test',
-        data: mockDBBigDataWithoutTokens[0],
-      },
-      {
-        ai_table_name: 'test',
-        data: mockDBBigDataWithoutTokens[1],
-      },
-      {
-        ai_table_name: 'test',
-        data: mockDBBigDataWithoutTokens[2],
-      },
-    ];
-    const test = await new DataManager({ verbose: true }).add({
-      data: bigDataTest,
+    const qa = new DataResponder({ verbose: true });
+    const test = await qa.ask({
+      question: 'Create a summary of all the data',
+      ai_table_name: 'history-of-argentina',
     });
-    // const test = await new Data({ verbose: true }).splitData({
-    //   formatted_data: mockDBBigDataWithoutTokens[0],
-    //   tokens: 11999,
-    // });
-
-    // const test = {
-    //   tokensLimit: await new DataChunks({ verbose: true }).getTokensLimit(),
-    // };
-
-    this.returnResponse(test);
+    this.returnResponse({ test });
   };
 }
 
-router.post('/test', (req: Request, res: Response) =>
-  new TestRoute({ req, res, verbose: true, allowStreaming: false }).handle(),
-);
+setupRoute(router, 'post', '/test', TestRoute, {
+  verbose: true,
+  allowStreaming: false,
+});
 
-router.post('/test2', (req: Request, res: Response) =>
-  new TestRoute2({ req, res, verbose: true, allowStreaming: false }).handle(),
-);
+setupRoute(router, 'post', '/test2', TestRoute2, {
+  verbose: true,
+  allowStreaming: false,
+});
 
 export default router;

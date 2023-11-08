@@ -2,10 +2,12 @@
 import {
   ChatCompletionCreateParams,
   ChatCompletionMessage,
+  ChatCompletionMessageToolCall,
   ChatCompletionRole,
 } from 'openai/resources/chat';
 import { PostgrestFilterBuilder } from '@supabase/postgrest-js';
 import OpenAI from 'openai';
+import { Request, Response } from 'express';
 
 /*
  * ========= General =========
@@ -64,8 +66,33 @@ export interface DynamicFunction extends ChatCompletionCreateParams.Function {
   call: (args?: any) => void;
 }
 
-export interface OpenAIChatCompletionResponse<T> {
-  data: T;
+// This helper type takes a map where the key is the function name
+// and the value is the type of its arguments.
+type ToolCallArguments<F extends Record<string, any>> = {
+  [K in keyof F]: {
+    name: K;
+    arguments: F[K];
+  };
+}[keyof F];
+
+// The OpenAIChatCompletionTool now uses the helper type to define the structure.
+type OpenAIChatCompletionTool<F extends Record<string, any>> = Omit<
+  ChatCompletionMessageToolCall,
+  'function'
+> & {
+  function: ToolCallArguments<F>;
+};
+
+// OpenAIChatCompletionMessage remains the same, just with a more generic constraint.
+type OpenAIChatCompletionMessage<F extends Record<string, any>> = Omit<
+  ChatCompletionMessage,
+  'function_call'
+> & {
+  tool_calls?: OpenAIChatCompletionTool<F>[];
+};
+
+export type OpenAIChatCompletionResponse<F extends Record<string, any>> = {
+  data: OpenAIChatCompletionMessage<F>;
   usageData: {
     prompt: number;
     completion: number;
@@ -76,7 +103,7 @@ export interface OpenAIChatCompletionResponse<T> {
     completion: number;
     total: number;
   };
-}
+};
 
 export enum GPTModelName {
   GPT4 = 'gpt-4',
@@ -87,7 +114,7 @@ export enum GPTModelName {
   GPT432k0613 = 'gpt-4-32k-0613',
   GPT4TURBO = 'gpt-4-1106-preview',
   GPT3 = 'gpt-3.5-turbo',
-  GPT316k = 'gpt-3.5-turbo-16k',
+  GPT316k = 'gpt-3.5-turbo-1106',
   GPT30301 = 'gpt-3.5-turbo-0301',
   GPT30613 = 'gpt-3.5-turbo-0613',
   GPT316k0613 = 'gpt-3.5-turbo-16k-0613',
@@ -210,6 +237,7 @@ export type DataInsert = {
   embedding: number[];
   tokens: number;
   formatted_data: string;
+  data_chunk?: string; // Initially, this is undefined. After the data chunk is created, this will be the data chunk id
 };
 
 export type DataChunkUpdate = {
@@ -240,6 +268,9 @@ export type GroupedDataObject = {
   data: DataInsert[];
 };
 
+/*
+ * ========= Data Chunks =========
+ */
 export type AssignedDataChunk = {
   data_chunk_id?: string; // If the data chunk is new, this will be undefined
   summary?: string; // If the data chunk is new, this will be undefined
@@ -247,4 +278,38 @@ export type AssignedDataChunk = {
   ai_table_name: string;
   data: DataInsert[]; // Representing the new data to be inserted in the data chunk
   tokens: number;
+};
+export type ProcessedDataChunk = SupabaseDataChunk & {
+  data: DataInsert[];
+};
+
+/*
+ * ========= BaseRoute =========
+ */
+
+export type BaseRouteParams = {
+  req: Request;
+  res: Response;
+  verbose?: boolean;
+  allowStreaming?: boolean;
+};
+
+/*
+ * ========= Question Assigner =========
+ */
+export type SupabaseDataChunkWithQuestion = SupabaseDataChunk & {
+  question: string;
+};
+
+export type AskParams = {
+  question: string;
+  ai_table_name: string;
+};
+
+export type DataChunkAnswer = {
+  answer: string | null;
+  question: string;
+  data_chunk: string;
+  costs: number;
+  usage: number;
 };
