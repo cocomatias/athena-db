@@ -9,6 +9,7 @@ import {
   DefaultClassParams,
   AssignedDataChunk,
   SupabaseData,
+  SupabaseDataChunk,
 } from '@types';
 // Utils
 import { BaseClass } from '@utils/BaseClass';
@@ -271,6 +272,7 @@ export class DataManager extends BaseClass {
 
       // 1. Get the data and the data_chunk ids of the data to be deleted
       try {
+        this.log('delete', `Getting the data to be deleted...`);
         const gettedData = await this.data.getData({
           ids: data_ids,
         });
@@ -290,6 +292,7 @@ export class DataManager extends BaseClass {
 
       // 2. Create AssignedDataChunks & Update the DataChunks
       try {
+        this.log('delete', `Updating the data chunks...`);
         // Get the data that it's not going to be deleted
         const dataFromDataChunksPromises = updateDataChunkIds.map(
           async (id) => {
@@ -328,8 +331,8 @@ export class DataManager extends BaseClass {
         data: groupedDataFromDataChunksObjects[key],
       }));
 
-      // 4. Create AssignedDataChunks
-      const assignedDataChunks: AssignedDataChunk[] =
+      // 4. Create the DataChunk updates array
+      const dataChunkUpdates: AssignedDataChunk[] =
         groupedDataFromDataChunks.map((d) => {
           const newLinesTokens = d.data.length * 2; // Add 2 tokens for every new line
           const formatted_data = d.data
@@ -348,7 +351,50 @@ export class DataManager extends BaseClass {
           };
         });
 
-      return assignedDataChunks;
+      // 5. Now we can delete the data
+      try {
+        this.log('delete', `Deleting the data...`);
+        await this.data.deleteData({ ids: data_ids });
+      } catch (error: any) {
+        const errorMsg = error.message
+          ? `Error deleting the data: ${error.message}`
+          : error;
+
+        throw new Error(errorMsg);
+      }
+
+      const supabaseDataChunkUpdates: SupabaseDataChunk[] = [];
+
+      // 6. Now we can update the data chunks
+      try {
+        this.log('delete', `Updating the data chunks...`);
+        const dataChunksUpdatesPromises = dataChunkUpdates.map(
+          async (dataChunkUpdate) => {
+            return await this.dataChunks.update({
+              data: dataChunkUpdate,
+            });
+          },
+        );
+
+        (await Promise.all(dataChunksUpdatesPromises)).map((d) => {
+          if (d) {
+            supabaseDataChunkUpdates.push(d);
+          }
+        });
+
+        this.log(
+          'delete',
+          `Updated ${supabaseDataChunkUpdates.length} data chunks.`,
+        );
+      } catch (error: any) {
+        const errorMsg = error.message
+          ? `Error updating the data chunks: ${error.message}`
+          : error;
+
+        throw new Error(errorMsg);
+      }
+
+      return supabaseDataChunkUpdates;
     } catch (error: any) {
       this.log('delete - Error', error.message || error, true);
       throw new Error(error.message || error);
