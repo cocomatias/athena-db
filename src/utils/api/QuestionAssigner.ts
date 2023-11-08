@@ -1,11 +1,14 @@
+// Types
 import {
   AskParams,
+  DataChunkAnswer,
   DefaultClassParams,
   GPTModelName,
   OpenAIChatCompletionResponse,
   SupabaseDataChunk,
   SupabaseDataChunkWithQuestion,
 } from '@types';
+// Utils
 import { BaseClass } from '@utils/BaseClass';
 import { OpenAIChatCompletion } from './OpenAIChatCompletion';
 import { getStringFromObject } from '@utils/getStringFromObject';
@@ -20,6 +23,9 @@ type ToolsTypes = {
   };
 };
 
+/**
+ * Assigns questions to data chunks based on their summaries.
+ */
 export class QuestionAssigner extends BaseClass {
   private model: GPTModelName = GPTModelName.GPT316k;
   private _dataChunks?: DataChunks;
@@ -39,8 +45,12 @@ export class QuestionAssigner extends BaseClass {
     return this._dataChunks;
   }
 
-  readonly getTokensLimit = async () => {
-    const openAIData = await this.getOpenAIData('', []);
+  /**
+   * Calculate the remaining tokens available after accounting for tool and message tokens.
+   * @returns The number of tokens remaining.
+   */
+  readonly getTokensLimit = async (): Promise<number> => {
+    const openAIData = await this.getOpenAIConfig('', []);
     const stringedTools = JSON.stringify(openAIData.tools);
     const avgToolsTokens = await getTokens(stringedTools);
     const tokensLimit =
@@ -49,10 +59,20 @@ export class QuestionAssigner extends BaseClass {
     return tokensLimit;
   };
 
-  readonly getOpenAIData = async (
+  /**
+   * Prepares the message and tools to be used for asking OpenAI to assign questions.
+   * @param question The question to be assigned.
+   * @param dataChunks The data chunks available for assignment.
+   * @returns The config to send to OpenAI.
+   */
+  readonly getOpenAIConfig = async (
     question: string,
     dataChunks: SupabaseDataChunk[],
-  ) => {
+  ): Promise<{
+    messages: OpenAIChatCompletion['messages'];
+    messagesTokens: number;
+    tools: OpenAIChatCompletion['tools'];
+  }> => {
     const role = `Role: You are a DataChunk Question Assigner.`;
     const instructions = `Instructions: You are going to receive summaries of data from DataChunks. You are also going to receive a question from the user. Your goal is to assign the question to the correct DataChunk. If you don't find any DataChunk that matches the question, you have to return a concise message saying that you couldn't find any DataChunk that matches the question. Improve as best as you can the user question so it matches the DataChunk summary. But never assign questions to DataChunks (based on the "summary") that don't match the question.`;
     const dataChunksInfo = dataChunks
@@ -117,10 +137,17 @@ export class QuestionAssigner extends BaseClass {
     };
   };
 
+  /**
+   * Assigns questions to data chunks based on the responses from OpenAI tool calls.
+   * @param params The parameters for assigning the questions to the data chunks.
+   * @param params.toolCalls The tool calls from the OpenAI response.
+   * @param params.dataChunks The data chunks to assign the questions to.
+   * @returns The data chunks with assigned questions.
+   */
   readonly getDataChunksWithQuestions = (params: {
     toolCalls: OpenAIChatCompletionResponse<ToolsTypes>['data']['tool_calls'];
     dataChunks: SupabaseDataChunk[];
-  }) => {
+  }): SupabaseDataChunkWithQuestion[] => {
     const { toolCalls, dataChunks } = params;
     try {
       const dataChunksWithQuestions: SupabaseDataChunkWithQuestion[] = [];
@@ -151,7 +178,20 @@ export class QuestionAssigner extends BaseClass {
     }
   };
 
-  readonly getDataChunkAnswers = async (params: AskParams) => {
+  /**
+   * Processes the given question and returns the answers after assigning it to the relevant data chunks.
+   * @param params The parameters for asking the question.
+   * @param params.question The question to ask.
+   * @param params.ai_table_name The AI table name to use for getting the data chunks.
+   * @returns The answers and usage metrics.
+   */
+  readonly getDataChunkAnswers = async (
+    params: AskParams,
+  ): Promise<{
+    cost: number;
+    usage: number;
+    data: DataChunkAnswer[];
+  }> => {
     const { question, ai_table_name } = params;
     try {
       // 1. Get the data chunks based on the ai_table_name
@@ -172,7 +212,7 @@ export class QuestionAssigner extends BaseClass {
       }
 
       // 2. Get the OpenAI data
-      const openAIData = await this.getOpenAIData(question, data);
+      const openAIData = await this.getOpenAIConfig(question, data);
 
       // 3. Ask OpenAI
       const openAIChatCompletion: OpenAIChatCompletionResponse<ToolsTypes> =

@@ -120,6 +120,12 @@ export class SupabaseConnection extends BaseClass {
     }
 
     if (ids) {
+      if (!Array.isArray(ids)) {
+        throw new Error(`ids param must be an array`);
+      }
+      if (ids.some((id) => typeof id !== 'string')) {
+        throw new Error(`All ids must be strings`);
+      }
       query.in('id', ids);
     }
 
@@ -175,7 +181,7 @@ export class SupabaseConnection extends BaseClass {
     return { data, error: error || null };
   };
 
-  public getData = async (
+  readonly getData = async (
     params: BaseQueryParams,
   ): Promise<SupabaseGetDataResponse<any>> => {
     const { table_name, ai_table_name, data_chunk_id } = params;
@@ -235,7 +241,7 @@ export class SupabaseConnection extends BaseClass {
    * @param table_name The Supabase table name to execute the query on.
    * @returns The total number of records
    */
-  public countData = async (params: BaseQueryParams) => {
+  readonly countData = async (params: BaseQueryParams) => {
     try {
       const query = this.buildQuery({ ...params, count: true });
 
@@ -251,7 +257,7 @@ export class SupabaseConnection extends BaseClass {
       const pgError = error as PostgrestError;
       const errorMsg =
         pgError.message || `Error counting data for ${params.table_name}`;
-      this.log('countData - Error', errorMsg);
+      this.log('countData - Error', errorMsg, true);
       return {
         data: null,
         error: errorMsg,
@@ -265,7 +271,7 @@ export class SupabaseConnection extends BaseClass {
    * @param data The data to insert
    * @returns The Supabase response
    */
-  public insertData = async ({
+  readonly insertData = async ({
     table_name,
     data,
   }: {
@@ -297,7 +303,7 @@ export class SupabaseConnection extends BaseClass {
    * @param data The data to update
    * @returns The Supabase response
    */
-  public updateData = async (params: SupabaseUpdateDataFunctionParams) => {
+  readonly updateData = async (params: SupabaseUpdateDataFunctionParams) => {
     const { table_name, data } = params;
     let response: any[] | null | string;
     const updated_at = new Date();
@@ -321,24 +327,24 @@ export class SupabaseConnection extends BaseClass {
    * @param table_name The Supabase table name
    * @returns The Supabase response
    */
-  public deleteData = async (params: {
+  readonly deleteData = async (params: {
     table_name: SupabaseDBNames;
-    id: string[];
+    ids: string[];
   }) => {
-    const { table_name, id } = params;
+    const { table_name, ids } = params;
     let response: string | null;
 
     const query = this.supabaseInstace.from(table_name).delete();
 
     if (table_name === 'ai_db_table') {
-      query.in('name', id);
+      query.in('name', ids);
     } else {
-      query.in('id', id);
+      query.in('id', ids);
     }
 
     const { error } = await query;
 
-    response = `Deleted ${id.length} records from '${table_name}' table`;
+    response = `Deleted ${ids.length} records from '${table_name}' table`;
     if (error) {
       this.log('deleteData - Error', error);
       response = null;
@@ -347,8 +353,12 @@ export class SupabaseConnection extends BaseClass {
     return { data: response, error: error?.message || null };
   };
 
-  // The static method that controls access to the singleton instance.
-  public static getInstance(verbose?: boolean): SupabaseConnection {
+  /**
+   * The static method that controls access to the singleton instance. This implementation let you subclass the Singleton class while keeping just one instance of each subclass around.
+   * @param verbose Whether to log messages or not
+   * @returns The singleton instance
+   */
+  static getInstance(verbose?: boolean): SupabaseConnection {
     if (!SupabaseConnection.instance) {
       SupabaseConnection.instance = new SupabaseConnection(verbose);
     }

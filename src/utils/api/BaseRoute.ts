@@ -6,8 +6,8 @@ import { sendMessage as sendMessageUtil } from '@utils/api/sendMessage';
 import { BaseRouteParams } from '@types';
 
 abstract class BaseRoute {
-  protected req: Request;
-  protected res: Response;
+  readonly req: Request;
+  readonly res: Response;
   private streaming: boolean = false; // The checkStreaming function is the only one that can set this property
   protected allowStreaming: boolean = false; // Whether to allow streaming or not
   protected verbose: boolean; // Whether to log messages or not
@@ -57,7 +57,7 @@ abstract class BaseRoute {
    * @param message The message to send
    * @description Sends streaming message if streaming is enabled
    */
-  protected sendMessage = async (message: string) =>
+  readonly sendMessage = async (message: string) =>
     sendMessageUtil({ message, res: this.res, streaming: this.streaming });
 
   /**
@@ -65,11 +65,11 @@ abstract class BaseRoute {
    * @param message The message to log
    * @description Logs a message
    */
-  protected log(
+  readonly log = (
     title: string | undefined,
     message: any,
     error?: boolean,
-  ): void {
+  ): void => {
     if (this.verbose) {
       niceLog(
         `${this.req.path} endpoint${title ? ` - ${title}` : ''}`,
@@ -78,13 +78,13 @@ abstract class BaseRoute {
         error,
       );
     }
-  }
+  };
 
   /**
    * @param error The error to handle
    * @description Handles an error
    */
-  protected handleError = (error: any) => {
+  readonly handleError = (error: any) => {
     this.log(`Error`, error, true);
 
     // Check if headers have already been sent
@@ -110,7 +110,7 @@ abstract class BaseRoute {
    * @description Returns a response
    * @returns The response. If streaming is enabled, it will send the response and end the request, else it will return the response.
    */
-  protected returnResponse = (response?: any) => {
+  readonly returnResponse = (response?: any) => {
     if (typeof response === 'number') {
       throw new Error('Response is a number. It must be an object or string');
     }

@@ -1,3 +1,4 @@
+// Types
 import {
   AIDBTableInsert,
   AddDataParams,
@@ -7,7 +8,9 @@ import {
   GroupedDataObject,
   DefaultClassParams,
   AssignedDataChunk,
+  SupabaseData,
 } from '@types';
+// Utils
 import { BaseClass } from '@utils/BaseClass';
 import { DataChunks } from './DataChunks';
 import { Data } from './Data';
@@ -17,7 +20,11 @@ type DataManagerAddParams = {
   createAITableIfNotExists?: boolean;
 };
 
+/**
+ * Manages the interactions with data chunks and individual data items.
+ */
 export class DataManager extends BaseClass {
+  // Private members for internal management of data chunks, data items, and Supabase interactions.
   private dataChunks = new DataChunks({ verbose: this.verbose });
   private data = new Data({ verbose: this.verbose });
   private supabaseAITableName: SupabaseDBNames = 'ai_db_table';
@@ -29,12 +36,14 @@ export class DataManager extends BaseClass {
   }
 
   /**
-   * @param data The data to extract the ai_table_name from
-   * @param createAITableIfNotExists If true, create the ai_table_name if it does not exist
-   * @description Checks if all the ai_table_name from the given data exists. If createAITableIfNotExists is true, create the ai_table_name if it does not exist.
-   * @returns `true` if all the ai_table_name exists. Otherwise, throw an error.
+   * Checks the existence of AI table names in the database and optionally creates them if they don't exist.
+   * @param params - An object containing the data to be added and a flag to create AI tables if they don't exist.
+   * @param params.data - The array of data objects to be added, which includes ai_table_name for each item.
+   * @param params.createAITableIfNotExists - A boolean flag that, when true, creates non-existing ai_table_name entries.
+   * @returns A Promise that resolves to true if all AI tables exist or are created, otherwise throws an error.
+   * @throws Will throw an error if any AI table name does not exist and the flag to create it is false.
    */
-  public checkAITableNames = async (params: DataManagerAddParams) => {
+  readonly checkAITableNames = async (params: DataManagerAddParams) => {
     const { data, createAITableIfNotExists } = params;
     this.log(
       'add',
@@ -99,7 +108,14 @@ export class DataManager extends BaseClass {
     return true;
   };
 
-  public assignDataChunks = async (params: { data: GroupedDataObject[] }) => {
+  /**
+   * Assigns data to appropriate chunks based on AI table names and tokens limits.
+   * @param params - An object containing grouped data objects.
+   * @param params.data - An array of GroupedDataObject instances to be assigned to chunks.
+   * @returns A Promise that resolves to an array of assigned data chunks ready for further processing.
+   * @throws Will throw an error if fetching data chunks from the database fails.
+   */
+  readonly assignDataChunks = async (params: { data: GroupedDataObject[] }) => {
     const { data } = params;
     const dataChunksTokensLimit = await this.dataChunks.getTokensLimit();
     // 1. Get the data chunks based on the ai_table_name
@@ -166,34 +182,15 @@ export class DataManager extends BaseClass {
     return existingDataChunks.filter((d) => d.data.length);
   };
 
-  public processAssignedDataChunks = async (params: {
-    data: AssignedDataChunk[];
-  }) => {
-    const { data } = params;
-    try {
-      // 1. Filter existing and not existing data chunks
-      const dataChunksUpdates = data.filter((d) => d.data_chunk_id);
-      const newDataChunks = data.filter((d) => !d.data_chunk_id);
-
-      // 2. Create new data chunks
-
-      // return dataChunks;
-    } catch (error: any) {
-      this.log(
-        'processAssignedDataChunks - Error',
-        error.message || error,
-        true,
-      );
-      throw new Error(error.message || error);
-    }
-  };
-
   /**
-   * @param data The data to add and create data chunks from
-   * @param createAITableIfNotExists If true, create the ai_table_name if it does not exist
-   * @returns The data chunks
+   * Adds data items to the database, creating data chunks and AI tables if necessary.
+   * @param params - Parameters for adding data, including the data and a flag to create AI tables.
+   * @param params.data - The array of data items to add.
+   * @param params.createAITableIfNotExists - When true, ensures that the AI tables are created if they don't exist.
+   * @returns A Promise that resolves to an object containing the total cost, usage, data chunks, and processed data.
+   * @throws Will throw an error if the process encounters any issues.
    */
-  public add = async (params: DataManagerAddParams) => {
+  readonly add = async (params: DataManagerAddParams) => {
     const { data } = params;
 
     try {
@@ -246,6 +243,114 @@ export class DataManager extends BaseClass {
       };
     } catch (error: any) {
       this.log('add - Error', error.message || error, true);
+      throw new Error(error.message || error);
+    }
+  };
+
+  readonly delete = async ({
+    data_ids,
+    ai_table_name,
+  }: {
+    data_ids?: string[];
+    ai_table_name?: string;
+  }) => {
+    try {
+      if (!data_ids && !ai_table_name) {
+        throw new Error(
+          `You must provide either data_ids or ai_table_name param`,
+        );
+      }
+
+      // If ai_table_name is provided, remove the DataChunk directly
+      if (ai_table_name) {
+        return 'Yes';
+      }
+
+      const updateDataChunkIds: string[] = [];
+      const dataFromDataChunks: SupabaseData[] = [];
+
+      // 1. Get the data and the data_chunk ids of the data to be deleted
+      try {
+        const gettedData = await this.data.getData({
+          ids: data_ids,
+        });
+
+        if (gettedData?.length) {
+          gettedData.map((d) => {
+            d.data_chunk && updateDataChunkIds.push(d.data_chunk);
+          });
+        }
+      } catch (error: any) {
+        const errorMsg = error.message
+          ? `Error getting the data to be deleted.\n\n${error.message}`
+          : error;
+
+        throw new Error(errorMsg);
+      }
+
+      // 2. Create AssignedDataChunks & Update the DataChunks
+      try {
+        // Get the data that it's not going to be deleted
+        const dataFromDataChunksPromises = updateDataChunkIds.map(
+          async (id) => {
+            const data = (
+              await this.data.getData({ data_chunk_id: id })
+            )?.filter((d) => !data_ids?.includes(d.id));
+            dataFromDataChunks.push(...(data || []));
+          },
+        );
+
+        await Promise.all(dataFromDataChunksPromises);
+      } catch (error: any) {
+        const errorMsg = error.message
+          ? `Error updating the data chunks.\n\n${error.message}`
+          : error;
+
+        throw new Error(errorMsg);
+      }
+
+      // 3. Group the data by data_chunk_id
+      const groupedDataFromDataChunksObjects = dataFromDataChunks.reduce(
+        (acc, data) => {
+          if (data.data_chunk) {
+            acc[data.data_chunk] = acc[data.data_chunk] || [];
+            acc[data.data_chunk].push(data);
+          }
+          return acc;
+        },
+        {} as { [key: string]: SupabaseData[] },
+      );
+
+      const groupedDataFromDataChunks = Object.keys(
+        groupedDataFromDataChunksObjects,
+      ).map((key) => ({
+        data_chunk_id: key,
+        data: groupedDataFromDataChunksObjects[key],
+      }));
+
+      // 4. Create AssignedDataChunks
+      const assignedDataChunks: AssignedDataChunk[] =
+        groupedDataFromDataChunks.map((d) => {
+          const newLinesTokens = d.data.length * 2; // Add 2 tokens for every new line
+          const formatted_data = d.data
+            .map((d) => d.formatted_data)
+            .join('\n\n');
+          const tokens = d.data.reduce(
+            (acc, d) => acc + d.tokens,
+            newLinesTokens,
+          );
+          return {
+            data_chunk_id: d.data_chunk_id,
+            ai_table_name: d.data[0].ai_table_name, // All the data in the same data chunk have the same ai_table_name
+            data: d.data,
+            formatted_data,
+            tokens,
+          };
+        });
+
+      return assignedDataChunks;
+    } catch (error: any) {
+      this.log('delete - Error', error.message || error, true);
       throw new Error(error.message || error);
     }
   };

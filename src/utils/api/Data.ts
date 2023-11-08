@@ -38,6 +38,12 @@ type SplittedData = {
   tokens: number;
 };
 
+type GetDataParams = {
+  data_chunk_id?: string;
+  ai_table_name?: string;
+  ids?: string[];
+};
+
 export class Data extends BaseClass {
   private _dataChunks?: DataChunks;
   private dataTokensLimit = new OpenAIEmbeddings({
@@ -63,9 +69,9 @@ export class Data extends BaseClass {
    * @param params Array of DataInsert objects
    * @returns An array of grouped data objects
    */
-  public groupDataObjectsByAiTableName(
+  readonly groupDataObjectsByAiTableName = (
     params: DataInsert[],
-  ): GroupedDataObject[] {
+  ): GroupedDataObject[] => {
     return params.reduce((result, param) => {
       const { ai_table_name } = param;
 
@@ -83,7 +89,7 @@ export class Data extends BaseClass {
 
       return result;
     }, [] as GroupedDataObject[]);
-  }
+  };
 
   /**
    * Splits the formatted data into two chunks with a specified number of overlapping words.
@@ -91,7 +97,7 @@ export class Data extends BaseClass {
    * @param params - The parameters including the text to be split, token count, and overlap word count.
    * @returns A promise that resolves to an array of data chunks with token counts.
    */
-  public splitData = async (
+  readonly splitData = async (
     params: SplitDataParams,
   ): Promise<SplittedData[]> => {
     const { formatted_data, tokens } = params;
@@ -145,7 +151,7 @@ export class Data extends BaseClass {
    * @param data The data to create the data object from
    * @returns The data object with the tokens, embedding, and formatted_data. Also returns the usage and cost of the OpenAI API call
    */
-  public createDataObject = async (
+  readonly createDataObject = async (
     data: CreateDataObjectParams,
   ): Promise<CreateDataObjectReturn> => {
     const dataChunksTokensLimit = await this.dataChunks.getTokensLimit();
@@ -225,11 +231,16 @@ export class Data extends BaseClass {
     }
   };
 
-  public getData = async (params: {
-    data_chunk_id?: string;
-    ai_table_name?: string;
-  }) => {
-    const { data_chunk_id, ai_table_name } = params;
+  /**
+   * @description Gets the data from the database
+   * @param params The parameters to get the data
+   * @param params.data_chunk_id (optional) The data chunk ID to get the data from
+   * @param params.ai_table_name (optional) The AI table name to get the data from
+   * @param params.ids (optional) The Data IDs
+   * @returns The data objects with the tokens, embedding, and formatted_data. Also returns the usage and cost of the OpenAI API call
+   */
+  readonly getData = async (params: GetDataParams) => {
+    const { data_chunk_id, ai_table_name, ids } = params;
 
     try {
       const data: SupabaseGetDataResponse<SupabaseData> =
@@ -237,6 +248,7 @@ export class Data extends BaseClass {
           table_name: this.supabaseDBName,
           data_chunk_id,
           ai_table_name,
+          ids,
         });
 
       if (data.error) {
@@ -324,6 +336,54 @@ export class Data extends BaseClass {
         error.message || error,
         true,
       );
+      throw new Error(error.message || error);
+    }
+  };
+
+  readonly deleteData = async (params: GetDataParams) => {
+    const { ids, data_chunk_id, ai_table_name } = params;
+    try {
+      let data_ids: string[] = [];
+      // Check if any of the params are present
+      if (!ids && !data_chunk_id && !ai_table_name) {
+        throw new Error('Missing required params');
+      }
+
+      // Check if more than one param is present
+      if (
+        (ids && data_chunk_id) ||
+        (ids && ai_table_name) ||
+        (data_chunk_id && ai_table_name)
+      ) {
+        throw new Error('Only one param is allowed');
+      }
+
+      if (ids) {
+        data_ids = ids;
+      } else if (data_chunk_id || ai_table_name) {
+        const data = await this.getData({ data_chunk_id, ai_table_name });
+        if (data?.length) data_ids = data.map((d) => d.id);
+      }
+
+      if (!data_ids.length) {
+        throw new Error('No data to delete');
+      }
+
+      const { error } = await this.supabase.deleteData({
+        table_name: this.supabaseDBName,
+        ids: data_ids,
+      });
+
+      if (error) {
+        throw error;
+      }
+
+      const successMessage = `Deleted ${data_ids.length} data`;
+      this.log('deleteData', successMessage);
+
+      return successMessage;
+    } catch (error: any) {
+      this.log('deleteData - Error', error.message || error, true);
       throw new Error(error.message || error);
     }
   };

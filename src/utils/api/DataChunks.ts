@@ -100,7 +100,7 @@ export class DataChunks extends BaseClass {
    * @param formatted_data The data to summarize
    * @returns The summary of the given data
    */
-  public createSummary = async (formatted_data: string) => {
+  readonly createSummary = async (formatted_data: string) => {
     try {
       if (!formatted_data.length) {
         throw new Error(`The data does not have a formatted_data`);
@@ -159,7 +159,7 @@ export class DataChunks extends BaseClass {
     return response;
   };
 
-  public processAssignedDataChunks = async (params: {
+  readonly processAssignedDataChunks = async (params: {
     data: AssignedDataChunk[];
   }) => {
     const { data } = params;
@@ -226,7 +226,7 @@ export class DataChunks extends BaseClass {
    * @param tokensAscending If true, the query will order the data by tokens ascending. If false, it will order by tokens descending, and if not provided, it will not be used
    * @returns The data chunks that match the parameters
    */
-  public get = async (params: DataChunkGetParams = {}) => {
+  readonly get = async (params: DataChunkGetParams = {}) => {
     const tokensLimit = await this.getTokensLimit();
     const { ai_table_name, tokensAscending, avialableTokens, data_chunk_ids } =
       params;
@@ -249,7 +249,7 @@ export class DataChunks extends BaseClass {
     }
   };
 
-  public create = async (params: DataChunksCreateParams) => {
+  readonly create = async (params: DataChunksCreateParams) => {
     const { data } = params;
     try {
       // 1. Check if the data chunk doesn't exist
@@ -292,7 +292,7 @@ export class DataChunks extends BaseClass {
     }
   };
 
-  public update = async (params: DataChunksCreateParams) => {
+  readonly update = async (params: DataChunksCreateParams) => {
     const { data } = params;
     try {
       if (!data.data_chunk_id) {
