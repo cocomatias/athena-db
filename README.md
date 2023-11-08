@@ -10,110 +10,105 @@ Our goal is to create an API-driven environment where developers can store data 
 
 ## Installation 🛠️
 
-To install AthenaDB, follow these steps:
+To get started with AthenaDB, execute the following steps:
 
-1.  Clone the repository:
+1. Clone the repository to your local machine:
 
     ```bash
     git clone [repo-url]
     ```
 
-2.  Install the required packages:
+2. Install the necessary dependencies using Yarn:
 
     ```bash
     yarn install
     ```
 
-3.  Start the development server:
+3. Fire up the development server:
 
     ```bash
     yarn dev
     ```
 
-4.  Create an `.env` file. See references on [.env.example](.env.example) for more information.
+4. Set up your environment variables by creating an `.env` file based on the provided [.env.example](.env.example).
 
-5.  Enable vectors extension in Supabase
+5. Activate the vectors extension in your Supabase project for enhanced functionality:
 
-    You have to enable vectors in your Supabase project. To do so, go to:
+    Navigate to `Dashboard > Project > Database > Extensions` and enable the "vector" extension.
 
-    `Dashboard > Project > Database > Extensions > Enable "vector" extension`.
-
-6.  Create tables in Supabase
+6. Establish the required tables in Supabase by executing the following SQL commands:
 
     1. `ai_db_table` Table:
 
        ```sql
-       create table
-       public.ai_db_table (
-           id uuid not null default gen_random_uuid (),
-           created_at timestamp with time zone not null default now(),
-           updated_at timestamp with time zone not null default now(),
-           description text null,
-           name text not null,
-           constraint ai_db_table_pkey primary key (id),
-           constraint ai_db_table_name_key unique (name)
-       ) tablespace pg_default;
+       CREATE TABLE public.ai_db_table (
+           id UUID NOT NULL DEFAULT gen_random_uuid(),
+           created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+           updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+           description TEXT NULL,
+           name TEXT NOT NULL,
+           PRIMARY KEY (id),
+           UNIQUE (name)
+       );
        ```
 
     2. `ai_db_data_chunk` Table:
 
        ```sql
-       create table
-       public.ai_db_data_chunk (
-           id uuid not null default gen_random_uuid (),
-           created_at timestamp with time zone not null default now(),
-           updated_at timestamp with time zone not null default now(),
-           formatted_data text not null,
-           summary text not null,
-           ai_table_name text not null,
-           tokens integer not null,
-           constraint ai_db_data_chunk_pkey primary key (id),
-           constraint ai_db_data_chunk_ai_table_name_fkey foreign key (ai_table_name) references ai_db_table (name) on delete cascade
-       ) tablespace pg_default;
+       CREATE TABLE public.ai_db_data_chunk (
+           id UUID NOT NULL DEFAULT gen_random_uuid(),
+           created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+           updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+           formatted_data TEXT NOT NULL,
+           summary TEXT NOT NULL,
+           ai_table_name TEXT NOT NULL,
+           tokens INTEGER NOT NULL,
+           PRIMARY KEY (id),
+           FOREIGN KEY (ai_table_name) REFERENCES ai_db_table (name) ON DELETE CASCADE
+       );
        ```
 
     3. `ai_db_data` Table:
 
        ```sql
-       create table
-       public.ai_db_data (
-           id uuid not null default gen_random_uuid (),
-           created_at timestamp with time zone not null default now(),
-           updated_at timestamp with time zone not null default now(),
-           data jsonb not null,
-           data_chunk uuid not null,
-           ai_table_name text not null,
-           embedding public.vector not null,
-           tokens integer not null,
-           formatted_data text not null,
-           constraint ai_db_data_pkey primary key (id),
-           constraint ai_db_data_ai_table_name_fkey foreign key (ai_table_name) references ai_db_table (name) on delete cascade,
-           constraint ai_db_data_data_chunk_fkey foreign key (data_chunk) references ai_db_data_chunk (id) on delete cascade
-           ) tablespace pg_default;
+       CREATE TABLE public.ai_db_data (
+           id UUID NOT NULL DEFAULT gen_random_uuid(),
+           created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+           updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+           data JSONB NOT NULL,
+           data_chunk UUID NOT NULL,
+           ai_table_name TEXT NOT NULL,
+           embedding VECTOR NOT NULL,
+           tokens INTEGER NOT NULL,
+           formatted_data TEXT NOT NULL,
+           PRIMARY KEY (id),
+           FOREIGN KEY (ai_table_name) REFERENCES ai_db_table (name) ON DELETE CASCADE,
+           FOREIGN KEY (data_chunk) REFERENCES ai_db_data_chunk (id) ON DELETE CASCADE
+       );
        ```
 
 ## Features ✨
 
-- **Data Segmentation**: Efficiently stores data in chunks, each paired with a GPT model to optimize token usage.
-- **Dynamic Summarization**: Automatically updates data summaries in chunks, ensuring that the system remains up-to-date with the latest information 🔍.
-- **Scalable Querying**: Utilizes a hierarchical system of question assigners to manage and retrieve data, scaling to accommodate an ever-growing dataset 📈.
-- **Token Tracking**: Includes a 'tokens' column for DataChunks and Data tables to monitor and manage token allocation effectively 📊.
+- **Data Segmentation**: Stores data efficiently in chunks, each optimally paired with a GPT model to maximize token usage.
+- **Dynamic Summarization**: Continuously refreshes data summaries in chunks, ensuring the system remains current with the latest information 🔍.
+- **Scalable Querying**: Manages and retrieves data through a hierarchical system of question assigners, scaling to meet the needs of an expanding dataset 📈.
+- **Token Monitoring**: Monitors and manages token allocations effectively with a dedicated 'tokens' column for DataChunks and Data tables 📊.
 
 ## Roadmap 🗺️
 
-- **Vectorized Caching**: Implements a vectorized caching system to enhance response times by referencing past queries with high similarity 💨.
+- **Vectorized Caching**: Aims to implement a vectorized caching system, improving response times by recognizing and leveraging similar past queries 💨.
 
 ## Philosophy 🤔
 
-AthenaDB isn't just a database; it's a testament to the potential of AI systems to grow alongside the data they handle. With a vision for effortless scaling and a user-friendly interface, AthenaDB aspires to make complex data interactions simple and accessible.
+AthenaDB is not just a database; it's a vision for the future of AI systems, evolving to match the expanding complexity of the data they process. With a commitment to effortless scaling and user-friendly interfaces, AthenaDB is poised to simplify intricate data interactions, making them straightforward and accessible to all.
 
-We invite you to join us on this journey to not just build a database, but to forge a community where developers, innovators, and thinkers converge to create something truly transformative 💪.
+Join our journey in forging a space where developers, innovators, and thinkers unite to pioneer transformative data interaction solutions 💪.
 
-Stay tuned for updates, and feel free to contribute to the birth of a new era in data interaction.
+Stay tuned for updates, and feel free to contribute to this pioneering era of data interaction.
 
 ---
 
-"Like Athena, emerging fully formed from the mind of Zeus, may wisdom and strength guide our creation." 🌟
+"In the spirit of Athena, who emerged fully formed from Zeus's mind, may wisdom and strength guide our creation." 🌟
 
 ---
 
