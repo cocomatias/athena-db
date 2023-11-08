@@ -35,7 +35,7 @@ To install AthenaDB, follow these steps:
 5.  Enable vectors extension in Supabase
 
     You have to enable vectors in your Supabase project. To do so, go to:
-    
+
     `Dashboard > Project > Database > Extensions > Enable "vector" extension`.
 
 6.  Create tables in Supabase
@@ -99,7 +99,7 @@ To install AthenaDB, follow these steps:
 - **Scalable Querying**: Utilizes a hierarchical system of question assigners to manage and retrieve data, scaling to accommodate an ever-growing dataset 📈.
 - **Token Tracking**: Includes a 'tokens' column for DataChunks and Data tables to monitor and manage token allocation effectively 📊.
 
-## Feature Improvements 📈
+## Roadmap 🗺️
 
 - **Vectorized Caching**: Implements a vectorized caching system to enhance response times by referencing past queries with high similarity 💨.
 
