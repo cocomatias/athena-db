@@ -13,8 +13,12 @@ Our goal is to create an API-driven environment where developers can store data 
 - **Data Segmentation**: Efficiently stores data in chunks, each paired with a GPT model to optimize token usage.
 - **Dynamic Summarization**: Automatically updates data summaries in chunks, ensuring that the system remains up-to-date with the latest information 🔍.
 - **Scalable Querying**: Utilizes a hierarchical system of question assigners to manage and retrieve data, scaling to accommodate an ever-growing dataset 📈.
-- **Vectorized Caching**: Implements a vectorized caching system to enhance response times by referencing past queries with high similarity 💨.
 - **Token Tracking**: Includes a 'tokens' column for DataChunks and Data tables to monitor and manage token allocation effectively 📊.
+
+
+## Feature Improvements 📈
+
+- **Vectorized Caching**: Implements a vectorized caching system to enhance response times by referencing past queries with high similarity 💨.
 
 ## Philosophy 🤔
 
@@ -32,7 +36,7 @@ Stay tuned for updates, and feel free to contribute to the birth of a new era in
 
 ## Contributions 🤝
 
-Your insights and contributions are what will make AthenaDB not just functional, but exceptional. We welcome developers, writers, designers, and thinkers of all stripes to contribute to AthenaDB's growth. Please see our [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on how to propose changes, submit issues, and make pull requests.
+Your insights and contributions are what will make AthenaDB not just functional, but exceptional. We welcome developers, writers, designers, and thinkers of all stripes to contribute to AthenaDB's growth.
 
 ## License 📄
 
