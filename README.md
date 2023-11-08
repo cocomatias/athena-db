@@ -4,88 +4,88 @@ Welcome to AthenaDB, an open-source initiative aimed at revolutionizing how we i
 
 ## Overview 📜
 
-AthenaDB is designed to tackle the challenges posed by the token limitations of GPT models in handling extensive datasets. By breaking down data into manageable 'chunks,' AthenaDB facilitates more efficient storage, retrieval, and summarization of information. It leverages the prowess of GPT-powered question assigners to intelligently navigate and utilize data, regardless of scale.
+AthenaDB addresses the token limitation challenge of GPT models in processing large datasets. It eschews traditional similarity/vector searches to minimize AI inefficiencies and reduce the occurrence of inaccurate information ("hallucinations"). By segmenting data into manageable units, AthenaDB enhances data storage, retrieval, and summarization, utilizing GPT-driven question assigners for scalable and intelligent data handling.
 
-Our goal is to create an API-driven environment where developers can store data in segmented blocks, each corresponding to a GPT model's token capacity. This segmentation allows for an expansion of tokens available to queries, thus circumventing the token limitations that typically constrain such AI models.
+Our mission: to engineer an API-centric ecosystem where data is stored in segments aligned with a GPT model's token capacity, expanding the token horizon for queries and overcoming usual AI model constraints.
 
-## Installation 🛠️
+## Getting Started 🛠️
 
 To get started with AthenaDB, execute the following steps:
 
 1. Clone the repository to your local machine:
 
-    ```bash
-    git clone [repo-url]
-    ```
+   ```bash
+   git clone [repo-url]
+   ```
 
 2. Install the necessary dependencies using Yarn:
 
-    ```bash
-    yarn install
-    ```
+   ```bash
+   yarn install
+   ```
 
 3. Fire up the development server:
 
-    ```bash
-    yarn dev
-    ```
+   ```bash
+   yarn dev
+   ```
 
 4. Set up your environment variables by creating an `.env` file based on the provided [.env.example](.env.example).
 
 5. Activate the vectors extension in your Supabase project for enhanced functionality:
 
-    Navigate to `Dashboard > Project > Database > Extensions` and enable the "vector" extension.
+   Navigate to `Dashboard > Project > Database > Extensions` and enable the "vector" extension.
 
 6. Establish the required tables in Supabase by executing the following SQL commands:
 
-    1. `ai_db_table` Table:
+   1. `ai_db_table` Table:
 
-       ```sql
-       CREATE TABLE public.ai_db_table (
-           id UUID NOT NULL DEFAULT gen_random_uuid(),
-           created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-           updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-           description TEXT NULL,
-           name TEXT NOT NULL,
-           PRIMARY KEY (id),
-           UNIQUE (name)
-       );
-       ```
+      ```sql
+      CREATE TABLE public.ai_db_table (
+          id UUID NOT NULL DEFAULT gen_random_uuid(),
+          created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+          updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+          description TEXT NULL,
+          name TEXT NOT NULL,
+          PRIMARY KEY (id),
+          UNIQUE (name)
+      );
+      ```
 
-    2. `ai_db_data_chunk` Table:
+   2. `ai_db_data_chunk` Table:
 
-       ```sql
-       CREATE TABLE public.ai_db_data_chunk (
-           id UUID NOT NULL DEFAULT gen_random_uuid(),
-           created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-           updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-           formatted_data TEXT NOT NULL,
-           summary TEXT NOT NULL,
-           ai_table_name TEXT NOT NULL,
-           tokens INTEGER NOT NULL,
-           PRIMARY KEY (id),
-           FOREIGN KEY (ai_table_name) REFERENCES ai_db_table (name) ON DELETE CASCADE
-       );
-       ```
+      ```sql
+      CREATE TABLE public.ai_db_data_chunk (
+          id UUID NOT NULL DEFAULT gen_random_uuid(),
+          created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+          updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+          formatted_data TEXT NOT NULL,
+          summary TEXT NOT NULL,
+          ai_table_name TEXT NOT NULL,
+          tokens INTEGER NOT NULL,
+          PRIMARY KEY (id),
+          FOREIGN KEY (ai_table_name) REFERENCES ai_db_table (name) ON DELETE CASCADE
+      );
+      ```
 
-    3. `ai_db_data` Table:
+   3. `ai_db_data` Table:
 
-       ```sql
-       CREATE TABLE public.ai_db_data (
-           id UUID NOT NULL DEFAULT gen_random_uuid(),
-           created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-           updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-           data JSONB NOT NULL,
-           data_chunk UUID NOT NULL,
-           ai_table_name TEXT NOT NULL,
-           embedding VECTOR NOT NULL,
-           tokens INTEGER NOT NULL,
-           formatted_data TEXT NOT NULL,
-           PRIMARY KEY (id),
-           FOREIGN KEY (ai_table_name) REFERENCES ai_db_table (name) ON DELETE CASCADE,
-           FOREIGN KEY (data_chunk) REFERENCES ai_db_data_chunk (id) ON DELETE CASCADE
-       );
-       ```
+      ```sql
+      CREATE TABLE public.ai_db_data (
+          id UUID NOT NULL DEFAULT gen_random_uuid(),
+          created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+          updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+          data JSONB NOT NULL,
+          data_chunk UUID NOT NULL,
+          ai_table_name TEXT NOT NULL,
+          embedding VECTOR NOT NULL,
+          tokens INTEGER NOT NULL,
+          formatted_data TEXT NOT NULL,
+          PRIMARY KEY (id),
+          FOREIGN KEY (ai_table_name) REFERENCES ai_db_table (name) ON DELETE CASCADE,
+          FOREIGN KEY (data_chunk) REFERENCES ai_db_data_chunk (id) ON DELETE CASCADE
+      );
+      ```
 
 ## Features ✨
 
@@ -97,6 +97,9 @@ To get started with AthenaDB, execute the following steps:
 ## Roadmap 🗺️
 
 - **Vectorized Caching**: Aims to implement a vectorized caching system, improving response times by recognizing and leveraging similar past queries 💨.
+- **Database Diversification**: To broaden database compatibility beyond Supabase.
+- **LLM Expansion**: To enhance support for a wider array of Large Language Models (LLMs) beyond OpenAI GPT.
+- **Similarity Search Integration**: To include a preliminary similarity search using existing data embeddings, followed by a DataChunk search if needed.
 
 ## Philosophy 🤔
 
