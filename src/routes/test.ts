@@ -23,6 +23,7 @@ import { DataManager } from '@utils/api/DataManager';
 import { setupRoute } from '@utils/api/setupRoute';
 import { QuestionAssigner } from '@utils/api/QuestionAssigner';
 import { DataResponder } from '@utils/api/DataResponder';
+import path from 'path';
 // import { Data } from '@utils/api/Data';
 
 const router = Router();
@@ -69,12 +70,16 @@ class TestRoute extends BaseRoute {
 
 class TestRoute2 extends BaseRoute {
   execute = async () => {
-    const qa = new DataResponder({ verbose: true });
-    const test = await qa.ask({
-      question: 'Create a summary of all the data',
-      ai_table_name: 'history-of-argentina',
-    });
-    this.returnResponse({ test });
+    // const qa = new DataResponder({ verbose: true });
+    const test = path.resolve(__dirname, '');
+    // const aiTables = await SupabaseConnection.getInstance(true).getData({
+    //   table_name: 'ai_db_table',
+    // });
+    // const test = await qa.ask({
+    //   question: 'Create a summary of all the data',
+    //   ai_table_name: 'history-of-argentina',
+    // });
+    this.returnResponse(test);
   };
 }
 

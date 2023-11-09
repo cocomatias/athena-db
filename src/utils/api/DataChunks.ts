@@ -342,9 +342,9 @@ export class DataChunks extends BaseClass {
         const { question, formatted_data } = data;
         // 1. Create the system message
         const role =
-          'Role: You are a Data Chunk Question Responder designed to answer any user prompt from the given data.';
+          'Role: You are an AI designed to answer any user prompt from the given data.';
         const instructions = `Instructions: Answer the user prompt with the given data.`;
-        const constraints = `Constraints: If you don't find the answer in the data, you must respond with 'I don't know'.`;
+        const constraints = `Constraints: If you don't find the answer in the data, you must respond with 'I don't know'. You can only use the data given by the user. You can't use any other data, even if you know the answer. The data given by the user is the source of truth.`;
         const dataInfo = `\nData:\n\n${formatted_data}`;
 
         const systemMessage = [role, instructions, constraints, dataInfo].join(

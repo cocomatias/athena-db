@@ -74,7 +74,7 @@ export class QuestionAssigner extends BaseClass {
     tools: OpenAIChatCompletion['tools'];
   }> => {
     const role = `Role: You are a DataChunk Question Assigner.`;
-    const instructions = `Instructions: You are going to receive summaries of data from DataChunks. You are also going to receive a question from the user. Your goal is to assign the question to the correct DataChunk. If you don't find any DataChunk that matches the question, you have to return a concise message saying that you couldn't find any DataChunk that matches the question. Improve as best as you can the user question so it matches the DataChunk summary. But never assign questions to DataChunks (based on the "summary") that don't match the question.`;
+    const instructions = `Instructions: You are going to receive summaries of data from DataChunks. You are also going to receive a question from the user. Your goal is to assign the question to the correct DataChunk. If you don't find a DataChunk that matches the question, then return an empty array.`;
     const dataChunksInfo = dataChunks
       .map((d) => ({
         data_chunk_id: d.id,

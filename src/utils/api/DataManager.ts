@@ -365,7 +365,7 @@ export class DataManager extends BaseClass {
 
       const supabaseDataChunkUpdates: SupabaseDataChunk[] = [];
 
-      // 6. Now we can update the data chunks
+      // 6. Update the data chunks to add the not deleted data
       try {
         this.log('delete', `Updating the data chunks...`);
         const dataChunksUpdatesPromises = dataChunkUpdates.map(
