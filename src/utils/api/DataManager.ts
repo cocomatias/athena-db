@@ -268,7 +268,7 @@ export class DataManager extends BaseClass {
         const deleteAITableMessage = await new AIDBTable({
           verbose: this.verbose,
         }).delete(ai_table_name);
-        
+
         return deleteAITableMessage;
       }
 
