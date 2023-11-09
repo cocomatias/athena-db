@@ -331,6 +331,12 @@ export class DataChunks extends BaseClass {
     }
   };
 
+  /**
+   * Responds to a list of user questions with the given data using an OpenAI model.
+   * @param params - An object containing the data to be used to respond to the questions.
+   * @returns An object containing the responses to the questions, the total cost of the API calls, and the total usage of the API.
+   * @throws An error if there was a problem with the API call.
+   */
   readonly respondQuestions = async (params: {
     data: SupabaseDataChunkWithQuestion[];
   }) => {
@@ -342,9 +348,9 @@ export class DataChunks extends BaseClass {
         const { question, formatted_data } = data;
         // 1. Create the system message
         const role =
-          'Role: You are an AI designed to answer any user prompt from the given data.';
+          'Role: You are an expert data analyst designed to answer any user prompt from the given data.';
         const instructions = `Instructions: Answer the user prompt with the given data.`;
-        const constraints = `Constraints: If you don't find the answer in the data, you must respond with 'I don't know'. You can only use the data given by the user. You can't use any other data, even if you know the answer. The data given by the user is the source of truth.`;
+        const constraints = `Constraints: If you can't answer the user question with the given data, explain why. You can only use the data given by the user. The given data is the source of truth.`;
         const dataInfo = `\nData:\n\n${formatted_data}`;
 
         const systemMessage = [role, instructions, constraints, dataInfo].join(
@@ -358,7 +364,7 @@ export class DataChunks extends BaseClass {
           },
           {
             role: 'user',
-            content: question,
+            content: `With the given data, respond the following user question: "${question}"`,
           },
         ];
 
