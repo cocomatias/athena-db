@@ -73,8 +73,8 @@ export class QuestionAssigner extends BaseClass {
     messagesTokens: number;
     tools: OpenAIChatCompletion['tools'];
   }> => {
-    const role = `Role: You are a DataChunk Question Assigner.`;
-    const instructions = `Instructions: You are going to receive summaries of data from DataChunks. You are also going to receive a question from the user. Your goal is to assign the question to the correct DataChunk. If you don't find a DataChunk that matches the question, then return an empty array.`;
+    const role = `Role: You are an expert question assigner.`;
+    const instructions = `Instructions: You are going to receive summaries of data from DataChunks. You are also going to receive a question from the user. Your goal is to assign the question to the correct DataChunk. If you don't find a DataChunk that matches the question, then return an empty array. Every question you assign, cost money and usage. So you have to be careful with the questions you assign.`;
     const dataChunksInfo = dataChunks
       .map((d) => ({
         data_chunk_id: d.id,

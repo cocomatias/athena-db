@@ -15,6 +15,7 @@ import {
 import { BaseClass } from '@utils/BaseClass';
 import { DataChunks } from './DataChunks';
 import { Data } from './Data';
+import { AIDBTable } from './AIDBTable';
 
 type DataManagerAddParams = {
   data: AddDataParams[];
@@ -264,7 +265,11 @@ export class DataManager extends BaseClass {
 
       // If ai_table_name is provided, remove the DataChunk directly
       if (ai_table_name) {
-        return 'Yes';
+        const deleteAITableMessage = await new AIDBTable({
+          verbose: this.verbose,
+        }).delete(ai_table_name);
+        
+        return deleteAITableMessage;
       }
 
       const updateDataChunkIds: string[] = [];
