@@ -1,7 +1,4 @@
-import {
-  DefaultClassParams,
-  SupabaseDBNames,
-} from '@types';
+import { DefaultClassParams, SupabaseDBNames } from '@types';
 import { BaseClass } from '@utils/BaseClass';
 
 export class AIDBTable extends BaseClass {
