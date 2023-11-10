@@ -26,15 +26,13 @@ To get started with AthenaDB, execute the following steps:
 
 3. Set up your environment variables by creating an `.env` file based on the provided [.env.example](.env.example).
 
-4. Here is an explanation of how to get the Supabase credentials: [Watch the Video](./docs/supabase_credentials_explanation.mov)
-
-5. Fire up the development server:
+4. Fire up the development server:
 
    ```bash
    yarn dev
    ```
 
-6. Run the endpoint "`http://localhost:3000/setup-supabase`" to create the necessary tables in your Supabase database.
+5. Run the endpoint "`http://localhost:3000/setup-supabase`" to create the necessary tables in your Supabase database.
 
 ## Features ✨
 
