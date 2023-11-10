@@ -71,7 +71,7 @@ class TestRoute extends BaseRoute {
 class TestRoute2 extends BaseRoute {
   execute = async () => {
     // const qa = new DataResponder({ verbose: true });
-    const test = path.resolve(__dirname, '');
+    // const test = path.resolve(__dirname, '');
     // const aiTables = await SupabaseConnection.getInstance(true).getData({
     //   table_name: 'ai_db_table',
     // });
@@ -79,6 +79,8 @@ class TestRoute2 extends BaseRoute {
     //   question: 'Create a summary of all the data',
     //   ai_table_name: 'history-of-argentina',
     // });
+
+    const test = await SupabaseConnection.getInstance(true).setupDB();
     this.returnResponse(test);
   };
 }

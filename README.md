@@ -24,68 +24,17 @@ To get started with AthenaDB, execute the following steps:
    yarn install
    ```
 
-3. Fire up the development server:
+3. Set up your environment variables by creating an `.env` file based on the provided [.env.example](.env.example).
+
+4. Here is an explanation of how to get the Supabase credentials: [Watch the Video](./docs/supabase_credentials_explanation.mov)
+
+5. Fire up the development server:
 
    ```bash
    yarn dev
    ```
 
-4. Set up your environment variables by creating an `.env` file based on the provided [.env.example](.env.example).
-
-5. Activate the vectors extension in your Supabase project for enhanced functionality:
-
-   Navigate to `Dashboard > Project > Database > Extensions` and enable the "vector" extension.
-
-6. Establish the required tables in Supabase by executing the following SQL commands:
-
-   1. `ai_db_table` Table:
-
-      ```sql
-      CREATE TABLE public.ai_db_table (
-          id UUID NOT NULL DEFAULT gen_random_uuid(),
-          created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-          updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-          description TEXT NULL,
-          name TEXT NOT NULL,
-          PRIMARY KEY (id),
-          UNIQUE (name)
-      );
-      ```
-
-   2. `ai_db_data_chunk` Table:
-
-      ```sql
-      CREATE TABLE public.ai_db_data_chunk (
-          id UUID NOT NULL DEFAULT gen_random_uuid(),
-          created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-          updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-          formatted_data TEXT NOT NULL,
-          summary TEXT NOT NULL,
-          ai_table_name TEXT NOT NULL,
-          tokens INTEGER NOT NULL,
-          PRIMARY KEY (id),
-          FOREIGN KEY (ai_table_name) REFERENCES ai_db_table (name) ON DELETE CASCADE
-      );
-      ```
-
-   3. `ai_db_data` Table:
-
-      ```sql
-      CREATE TABLE public.ai_db_data (
-          id UUID NOT NULL DEFAULT gen_random_uuid(),
-          created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-          updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-          data JSONB NOT NULL,
-          data_chunk UUID NOT NULL,
-          ai_table_name TEXT NOT NULL,
-          embedding VECTOR NOT NULL,
-          tokens INTEGER NOT NULL,
-          formatted_data TEXT NOT NULL,
-          PRIMARY KEY (id),
-          FOREIGN KEY (ai_table_name) REFERENCES ai_db_table (name) ON DELETE CASCADE,
-          FOREIGN KEY (data_chunk) REFERENCES ai_db_data_chunk (id) ON DELETE CASCADE
-      );
-      ```
+6. Run the endpoint "`http://localhost:3000/setup-supabase`" to create the necessary tables in your Supabase database.
 
 ## Features ✨
 

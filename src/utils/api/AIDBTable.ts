@@ -1,8 +1,6 @@
 import {
   DefaultClassParams,
-  SupabaseAIDBTable,
   SupabaseDBNames,
-  SupabaseGetDataResponse,
 } from '@types';
 import { BaseClass } from '@utils/BaseClass';
 

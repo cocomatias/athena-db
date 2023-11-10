@@ -1,3 +1,5 @@
+import { Pool } from 'pg';
+
 // Vendors
 import {
   SupabaseClient,
@@ -23,6 +25,14 @@ import { generateRanges } from '@utils/generateRanges';
 export class SupabaseConnection extends BaseClass {
   private supabaseUrl: string;
   private supabaseKey: string;
+  private supabaseConnectionString: string =
+    process.env.TEST_SUPABASE_CONNECTION_STRING || '';
+  private pool = new Pool({
+    connectionString: this.supabaseConnectionString,
+    ssl: {
+      rejectUnauthorized: false, // Adjust SSL settings as needed
+    },
+  });
   public supabaseInstace: SupabaseClient<any, 'public', any>;
   // Singleton instance
   private static instance: SupabaseConnection;
@@ -255,8 +265,10 @@ export class SupabaseConnection extends BaseClass {
       return { data: responseData as number, error };
     } catch (error) {
       const pgError = error as PostgrestError;
-      const errorMsg =
-        pgError.message || `Error counting data for ${params.table_name}`;
+      let errorMsg = `Error counting data for ${params.table_name}: ${pgError.message}`;
+      if (!pgError.message) {
+        errorMsg = `No data found for ${params.table_name} table`;
+      }
       this.log('countData - Error', errorMsg, true);
       return {
         data: null,
@@ -365,4 +377,124 @@ export class SupabaseConnection extends BaseClass {
 
     return SupabaseConnection.instance;
   }
+
+  private runSQL = async (query: string) => {
+    const client = await this.pool.connect();
+    try {
+      const res = await client.query(query);
+      return { data: res, error: null };
+    } catch (error: any) {
+      this.log('runSQL - Error', error, true);
+      return { error: error.message, data: null };
+    } finally {
+      client.release();
+    }
+  };
+
+  private getQueries = () => {
+    // 1. Create extension query
+    const extensionQuery = `CREATE EXTENSION IF NOT EXISTS vector`;
+
+    // 2. Create tables queries
+    const aiDBTableQuery = `CREATE TABLE IF NOT EXISTS public.ai_db_table (
+      id UUID NOT NULL DEFAULT gen_random_uuid(),
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+      updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+      description TEXT NULL,
+      name TEXT NOT NULL,
+      PRIMARY KEY (id),
+      UNIQUE (name));
+      
+      ALTER TABLE public.ai_db_table ENABLE ROW LEVEL SECURITY;`;
+
+    const dataChunkTableQuery = `CREATE TABLE IF NOT EXISTS public.ai_db_data_chunk (
+    id UUID NOT NULL DEFAULT gen_random_uuid(),
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    formatted_data TEXT NOT NULL,
+    summary TEXT NOT NULL,
+    ai_table_name TEXT NOT NULL,
+    tokens INTEGER NOT NULL,
+    PRIMARY KEY (id),
+    FOREIGN KEY (ai_table_name) REFERENCES ai_db_table (name) ON DELETE CASCADE);
+    
+    ALTER TABLE public.ai_db_data_chunk ENABLE ROW LEVEL SECURITY;`;
+
+    const dataTableQuery = `CREATE TABLE IF NOT EXISTS public.ai_db_data (
+      id UUID NOT NULL DEFAULT gen_random_uuid(),
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+      updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+      data JSONB NOT NULL,
+      data_chunk UUID NOT NULL,
+      ai_table_name TEXT NOT NULL,
+      embedding VECTOR NOT NULL,
+      tokens INTEGER NOT NULL,
+      formatted_data TEXT NOT NULL,
+      PRIMARY KEY (id),
+      FOREIGN KEY (ai_table_name) REFERENCES ai_db_table (name) ON DELETE CASCADE,
+      FOREIGN KEY (data_chunk) REFERENCES ai_db_data_chunk (id) ON DELETE CASCADE);
+      
+      ALTER TABLE public.ai_db_data ENABLE ROW LEVEL SECURITY;`;
+
+    return {
+      extension: extensionQuery,
+      aiDBTable: aiDBTableQuery,
+      dataChunkTable: dataChunkTableQuery,
+      dataTable: dataTableQuery,
+    };
+  };
+
+  public setupDB = async () => {
+    try {
+      // 1. Get quereis
+      const queries = this.getQueries();
+
+      // 2. Execute extension query
+      const extension = await this.runSQL(queries.extension);
+
+      if (extension.error) {
+        const errorMsg = `Error creating 'vector' extension: ${
+          extension.error.message || extension.error
+        }`;
+        throw new Error(errorMsg);
+      }
+
+      // 3. Execute ai_db_table query
+      const aiDBTable = await this.runSQL(queries.aiDBTable);
+
+      if (aiDBTable.error) {
+        const errorMsg = `Error creating 'ai_db_table' table: ${
+          aiDBTable.error.message || aiDBTable.error
+        }`;
+        throw new Error(errorMsg);
+      }
+
+      // 4. Execute ai_db_data_chunk query
+      const dataChunkTable = await this.runSQL(queries.dataChunkTable);
+
+      if (dataChunkTable.error) {
+        const errorMsg = `Error creating 'ai_db_data_chunk' table: ${
+          dataChunkTable.error.message || dataChunkTable.error
+        }`;
+        throw new Error(errorMsg);
+      }
+
+      // 5. Execute ai_db_data query
+      const dataTable = await this.runSQL(queries.dataTable);
+
+      if (dataTable.error) {
+        const errorMsg = `Error creating 'ai_db_data' table: ${
+          dataTable.error.message || dataTable.error
+        }`;
+        throw new Error(errorMsg);
+      }
+
+      const extensionMsg = `Extension 'vector' created (if it didn't exist)`;
+      const tablesMsg = `Tables 'ai_db_table', 'ai_db_data_chunk' and 'ai_db_data' created (if they didn't exist)`;
+
+      return { extension: extensionMsg, tables: tablesMsg };
+    } catch (error: any) {
+      throw new Error(error.message || error);
+    }
+  };
 }

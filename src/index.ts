@@ -22,6 +22,7 @@ const requiredEnvVariables = [
   'SUPABASE_KEY',
   'SUPABASE_URL',
   'SECRET_KEY',
+  'SUPABASE_CONNECTION_STRING',
 ];
 
 for (const envVariable of requiredEnvVariables) {
