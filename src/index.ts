@@ -9,6 +9,7 @@ import {
   dataManagerRoute,
   dataResponderRoute,
   deleteDataRoute,
+  setupDatabaseRoute,
   test,
 } from '@routes';
 // Utils
@@ -48,6 +49,7 @@ app.use(dataManagerRoute);
 app.use(dataResponderRoute);
 app.use(addDataRoute);
 app.use(deleteDataRoute);
+app.use(setupDatabaseRoute);
 
 const server = app.listen(port, () => {
   const addressInfo = server.address();
