@@ -29,7 +29,7 @@ class DeleteDataRoute extends BaseRoute {
       data_ids: this.ids,
       ai_table_name: this.ai_table_name,
     });
-    
+
     this.returnResponse(deleteDataResponse);
   };
 }

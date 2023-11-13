@@ -113,10 +113,7 @@ export class OpenAIChatCompletion extends BaseClass {
       let response: Response<any>;
 
       if (this.timeout) {
-        response = await abortablePromise(
-          this._callFunction(),
-          this.timeout,
-        );
+        response = await abortablePromise(this._callFunction(), this.timeout);
       } else {
         response = await this._callFunction();
       }
