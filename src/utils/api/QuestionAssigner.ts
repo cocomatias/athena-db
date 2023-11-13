@@ -16,7 +16,7 @@ import { getTokens } from '@utils/getTokens';
 import { getTokensLimit } from '@utils/getTokensLimit';
 import { DataChunks } from './DataChunks';
 
-type ToolsTypes = {
+type AssignQuestionToolTypes = {
   assignQuestionToDataChunks: {
     data_chunk_id: string;
     question: string;
@@ -73,8 +73,9 @@ export class QuestionAssigner extends BaseClass {
     messagesTokens: number;
     tools: OpenAIChatCompletion['tools'];
   }> => {
-    const role = `Role: You are an expert question assigner.`;
-    const instructions = `Instructions: You are going to receive summaries of data from DataChunks. You are also going to receive a question from the user. Your goal is to assign the question to the correct DataChunk. If you don't find a DataChunk that matches the question, then return an empty array. Every question you assign, cost money and usage. So you have to be careful with the questions you assign.`;
+    const role = `Role: Expert question assigner.`;
+    const instructions = `Instructions: Assign user questions to the relevant DataChunk based on its summary. If no DataChunk matches, return an empty array. Assign judiciously to manage costs and usage.`;
+
     const dataChunksInfo = dataChunks
       .map((d) => ({
         data_chunk_id: d.id,
@@ -145,7 +146,7 @@ export class QuestionAssigner extends BaseClass {
    * @returns The data chunks with assigned questions.
    */
   readonly getDataChunksWithQuestions = (params: {
-    toolCalls: OpenAIChatCompletionResponse<ToolsTypes>['data']['tool_calls'];
+    toolCalls: OpenAIChatCompletionResponse<AssignQuestionToolTypes>['data']['tool_calls'];
     dataChunks: SupabaseDataChunk[];
   }): SupabaseDataChunkWithQuestion[] => {
     const { toolCalls, dataChunks } = params;
@@ -214,8 +215,8 @@ export class QuestionAssigner extends BaseClass {
       // 2. Get the OpenAI data
       const openAIData = await this.getOpenAIConfig(question, data);
 
-      // 3. Ask OpenAI
-      const openAIChatCompletion: OpenAIChatCompletionResponse<ToolsTypes> =
+      // 3. Create questions for the data chunks
+      const openAIChatCompletion: OpenAIChatCompletionResponse<AssignQuestionToolTypes> =
         await new OpenAIChatCompletion({
           verbose: this.verbose,
           model: this.model,

@@ -42,6 +42,7 @@ type GetDataParams = {
   data_chunk_id?: string;
   ai_table_name?: string;
   ids?: string[];
+  tokensAscending?: boolean;
 };
 
 export class Data extends BaseClass {
@@ -240,7 +241,7 @@ export class Data extends BaseClass {
    * @returns The data objects with the tokens, embedding, and formatted_data. Also returns the usage and cost of the OpenAI API call
    */
   readonly getData = async (params: GetDataParams) => {
-    const { data_chunk_id, ai_table_name, ids } = params;
+    const { data_chunk_id, ai_table_name, ids, tokensAscending } = params;
 
     try {
       const data: SupabaseGetDataResponse<SupabaseData> =
@@ -249,6 +250,7 @@ export class Data extends BaseClass {
           data_chunk_id,
           ai_table_name,
           ids,
+          tokensAscending,
         });
 
       if (data.error) {

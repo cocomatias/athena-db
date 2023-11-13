@@ -286,6 +286,8 @@ export class DataManager extends BaseClass {
           gettedData.map((d) => {
             d.data_chunk && updateDataChunkIds.push(d.data_chunk);
           });
+        } else {
+          throw new Error(`No data found with the given ids: ${data_ids}`);
         }
       } catch (error: any) {
         const errorMsg = error.message
@@ -297,7 +299,6 @@ export class DataManager extends BaseClass {
 
       // 2. Create AssignedDataChunks & Update the DataChunks
       try {
-        this.log('delete', `Updating the data chunks...`);
         // Get the data that it's not going to be deleted
         const dataFromDataChunksPromises = updateDataChunkIds.map(
           async (id) => {
@@ -309,9 +310,16 @@ export class DataManager extends BaseClass {
         );
 
         await Promise.all(dataFromDataChunksPromises);
+        if (!dataFromDataChunks.length) {
+          throw new Error(
+            `No data found inside the dataChunks with ids: ${updateDataChunkIds}`,
+          );
+        }
+
+        this.log('delete', `Got ${dataFromDataChunks.length} DataChunks data.`);
       } catch (error: any) {
         const errorMsg = error.message
-          ? `Error updating the data chunks.\n\n${error.message}`
+          ? `Error getting Data from the Data Chunks.\n\n${error.message}`
           : error;
 
         throw new Error(errorMsg);
@@ -372,7 +380,10 @@ export class DataManager extends BaseClass {
 
       // 6. Update the data chunks to add the not deleted data
       try {
-        this.log('delete', `Updating the data chunks...`);
+        this.log(
+          'delete',
+          `Updating ${dataChunkUpdates.length} data chunks...`,
+        );
         const dataChunksUpdatesPromises = dataChunkUpdates.map(
           async (dataChunkUpdate) => {
             return await this.dataChunks.update({
@@ -383,6 +394,7 @@ export class DataManager extends BaseClass {
 
         (await Promise.all(dataChunksUpdatesPromises)).map((d) => {
           if (d) {
+            this.log('Testing', d);
             supabaseDataChunkUpdates.push(d);
           }
         });

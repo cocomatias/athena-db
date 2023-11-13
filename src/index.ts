@@ -9,6 +9,7 @@ import {
   dataManagerRoute,
   dataResponderRoute,
   deleteDataRoute,
+  getDataRoute,
   setupDatabaseRoute,
   test,
 } from '@routes';
@@ -29,8 +30,8 @@ const requiredEnvVariables = [
 for (const envVariable of requiredEnvVariables) {
   if (!process.env[envVariable]) {
     niceLog(
-      'Missing required environment variable',
-      envVariable,
+      'Error running app',
+      `Missing required environment variable: '${envVariable}'`,
       undefined,
       true,
     );
@@ -50,6 +51,7 @@ app.use(dataResponderRoute);
 app.use(addDataRoute);
 app.use(deleteDataRoute);
 app.use(setupDatabaseRoute);
+app.use(getDataRoute);
 
 const server = app.listen(port, () => {
   const addressInfo = server.address();

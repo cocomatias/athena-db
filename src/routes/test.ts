@@ -9,7 +9,6 @@ import { DataWithTokens, DataInsert, GPTModelName } from '@types';
 import { SupabaseConnection } from '@utils/api/SupabaseConnection';
 // import { getTokens } from '@utils/getTokens';
 // import { getStringFromObject } from '@utils/getStringFromObject';
-// import { niceLog } from '@utils/niceLog';
 import {
   // mockAssignedDataChunk,
   mockDBBigDataWithoutTokens,
@@ -18,12 +17,8 @@ import {
   // mockGroupedSupabaseAIDBData,
 } from '@utils/mockData';
 // import { OpenAIEmbeddings } from '@utils/api/OpenAIEmbeddings';
-import { DataChunks } from '@utils/api/DataChunks';
-import { DataManager } from '@utils/api/DataManager';
 import { setupRoute } from '@utils/api/setupRoute';
-import { QuestionAssigner } from '@utils/api/QuestionAssigner';
-import { DataResponder } from '@utils/api/DataResponder';
-import path from 'path';
+import abortablePromise from '@utils/api/abortablePromise';
 // import { Data } from '@utils/api/Data';
 
 const router = Router();
@@ -70,17 +65,14 @@ class TestRoute extends BaseRoute {
 
 class TestRoute2 extends BaseRoute {
   execute = async () => {
-    // const qa = new DataResponder({ verbose: true });
-    // const test = path.resolve(__dirname, '');
-    // const aiTables = await SupabaseConnection.getInstance(true).getData({
-    //   table_name: 'ai_db_table',
-    // });
-    // const test = await qa.ask({
-    //   question: 'Create a summary of all the data',
-    //   ai_table_name: 'history-of-argentina',
-    // });
+    // Example of promise
+    const myPromise = new Promise((resolve) =>
+      setTimeout(() => {
+        resolve('test');
+      }, 2000),
+    );
 
-    const test = await SupabaseConnection.getInstance(true).setupDB();
+    const test = await abortablePromise(myPromise, 3000); // Will timeout after 3 seconds
     this.returnResponse(test);
   };
 }

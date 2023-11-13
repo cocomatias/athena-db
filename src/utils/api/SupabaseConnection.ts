@@ -194,7 +194,7 @@ export class SupabaseConnection extends BaseClass {
   readonly getData = async (
     params: BaseQueryParams,
   ): Promise<SupabaseGetDataResponse<any>> => {
-    const { table_name, ai_table_name, data_chunk_id } = params;
+    const { table_name, ai_table_name } = params;
 
     try {
       // 1. Count the total number of records

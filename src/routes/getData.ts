@@ -1,14 +1,14 @@
+import express, { Router } from 'express';
 import BaseRoute from '@utils/api/BaseRoute';
-import { DataManager } from '@utils/api/DataManager';
 import { setupRoute } from '@utils/api/setupRoute';
 import { checkDatRouteParams } from '@utils/checkDataRouteParams';
-import express, { Router } from 'express';
+import { Data } from '@utils/api/Data';
 
 const router = Router();
 // Parse JSON bodies (as sent by API clients)
 router.use(express.json());
 
-class DeleteDataRoute extends BaseRoute {
+export class GetDataRoute extends BaseRoute {
   private ids?: string[];
   private ai_table_name?: string;
 
@@ -21,20 +21,19 @@ class DeleteDataRoute extends BaseRoute {
 
   execute = async () => {
     this.checkParams();
-    const dm = new DataManager({
+    const data = await new Data({
       verbose: this.verbose,
+    }).getData({
+      ai_table_name: this.ai_table_name,
+      ids: this.ids,
+      tokensAscending: false,
     });
 
-    const deleteDataResponse = await dm.delete({
-      data_ids: this.ids,
-      ai_table_name: this.ai_table_name,
-    });
-    
-    this.returnResponse(deleteDataResponse);
+    this.returnResponse(data?.map((d) => ({ ...d, embedding: undefined })));
   };
 }
 
-setupRoute(router, 'post', '/delete-data', DeleteDataRoute, {
+setupRoute(router, 'post', '/get-data', GetDataRoute, {
   verbose: true,
   allowStreaming: false,
 });

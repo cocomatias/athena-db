@@ -96,6 +96,21 @@ export class DataResponder extends BaseClass {
         question,
       );
 
+      // 2.1. If there is only one answer, return it as the conclusion
+      if (dataChunkAnswers.data.length === 1) {
+        const conclusion = dataChunkAnswers.data[0].answer;
+        this.log(
+          'ask',
+          `Conclusion created!\n\nTotal Cost: ${this.totalCosts}\nTotal Usage: ${this.totalUsage}\n\nConclusion: ${conclusion}`,
+        );
+        return {
+          answer: conclusion,
+          question,
+          costs: this.totalCosts,
+          usage: this.totalUsage,
+        };
+      }
+
       this.log(
         'ask',
         `Data Chunks responded ${dataChunkAnswers.data.length} questions.\nCreating conclusion...`,
