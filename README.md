@@ -26,6 +26,7 @@ To get started with AthenaDB, execute the following steps:
 
 3. Set up your environment variables by creating an `.env` file based on the provided [.env.example](.env.example).
    <br>
+
    > **Note:** You will need to create a [Supabase](https://supabase.io/) account and database to store your data. If you have problems finding the SUPABASE_CONNECTION_STRING, you can find it in `Project Settings > Database > Connection Pooling Custom Configuration > Connection string`. You have to save the Supabase Database Password and replace `[YOUR-PASSWORD]` from the connection string with it.
 
 4. Fire up the development server:
@@ -49,6 +50,7 @@ To get started with AthenaDB, execute the following steps:
 - **Database Diversification**: To broaden database compatibility beyond Supabase.
 - **LLM Expansion**: To enhance support for a wider array of Large Language Models (LLMs) beyond OpenAI GPT.
 - **Similarity Search Integration**: To include a preliminary similarity search using existing data embeddings, followed by a DataChunk search if needed.
+- **Image Support**: To support image data in addition to text data. The idea is to use `gpt-4-vision` to let users also search images with queries.
 
 ## Philosophy 🤔
 
