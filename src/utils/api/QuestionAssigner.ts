@@ -74,7 +74,8 @@ export class QuestionAssigner extends BaseClass {
     tools: OpenAIChatCompletion['tools'];
   }> => {
     const role = `Role: Expert question assigner.`;
-    const instructions = `Instructions: Assign user questions to the relevant DataChunk based on its summary. If no DataChunk matches, return an empty array. Assign judiciously to manage costs and usage.`;
+    const instructions = `Instructions: Assign user questions to the relevant DataChunks based on its summaries. If no DataChunk matches, return an empty array. Assign judiciously to manage costs and usage.`;
+    const dataChunkContext = `DataChunks context: Each DataChunk has a summary that describes the data it contains.`;
 
     const dataChunksInfo = dataChunks
       .map((d) => ({
@@ -93,7 +94,7 @@ export class QuestionAssigner extends BaseClass {
         function: {
           name: 'assignQuestionToDataChunks',
           description:
-            'Assign question to the corresponding DataChunks only if the question matches the DataChunk summary.',
+            'Assign question to the corresponding DataChunks only if the question matches the DataChunk summary. You can assign the question to multiple DataChunks. Some questions may require to be assigned to all the DataChunks.',
           parameters: {
             type: 'object',
             properties: {
@@ -113,7 +114,11 @@ export class QuestionAssigner extends BaseClass {
     const messages: OpenAIChatCompletion['messages'] = [
       {
         role: 'system',
-        content: `${role}\n${instructions}\n\n${dataChunksMessage}`,
+        content: `${role}\n${instructions}\n${dataChunkContext}`,
+      },
+      {
+        role: 'assistant',
+        content: `This are the DataChunks summaries:\n\n\`\`\`\n${dataChunksMessage}\n\`\`\``,
       },
       {
         role: 'user',
@@ -211,6 +216,11 @@ export class QuestionAssigner extends BaseClass {
       if (!data || !data.length) {
         throw new Error(`No DataChunks found for '${ai_table_name}'`);
       }
+
+      this.log(
+        'ask',
+        `Got ${data.length} data chunks based on the ai_table_name '${ai_table_name}'`,
+      );
 
       // 2. Get the OpenAI data
       const openAIData = await this.getOpenAIConfig(question, data);

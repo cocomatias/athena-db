@@ -119,7 +119,7 @@ export class DataResponder extends BaseClass {
       // 3. Create Conclusion
       const conclusionRequest = await new OpenAIChatCompletion({
         model: this.conclusionModel,
-        verbose: this.verbose,
+        verbose: false, // Since we are already logging the response, we don't need to log it again
         messages: getConclusionMessages.data,
       }).call();
 

@@ -345,22 +345,25 @@ export class DataChunks extends BaseClass {
       const respondQuestion = async (
         data: SupabaseDataChunkWithQuestion,
       ): Promise<DataChunkAnswer> => {
-        const { question, formatted_data } = data;
+        const { question, formatted_data, id } = data;
         // 1. Create the system message
-        const role =
-          'Role: You are an expert data analyst designed to answer any user prompt from the given data.';
-        const instructions = `Instructions: Answer the user prompt with the given data.`;
-        const constraints = `Constraints: If you can't answer the user question with the given data, explain why. You can only use the data given by the user. The given data is the source of truth.`;
-        const dataInfo = `\nData:\n\n${formatted_data}`;
+        const role = 'Role: Expert Data Analyst';
+        const instructions =
+          'Instructions: With the given Dataset, respond the user question. You also have a great ability to summarize and explain the dataset in a simple and concise manner.';
+        // We are using constraints since it's limitting the responses
+        const constraints =
+          'Constraints: If a question cannot be answered, explain why in a simple and concise manner.';
 
-        const systemMessage = [role, instructions, constraints, dataInfo].join(
-          '\n',
-        );
+        const systemMessage = [role, instructions].join('\n');
 
         const messages: ChatCompletionMessageParam[] = [
           {
             role: 'system',
             content: systemMessage,
+          },
+          {
+            role: 'assistant',
+            content: `This is the Dataset:\n\n\`\`\`${formatted_data}\`\`\``,
           },
           {
             role: 'user',
@@ -370,7 +373,7 @@ export class DataChunks extends BaseClass {
 
         // 2. Create the question response
         const response = await new OpenAIChatCompletion({
-          verbose: this.verbose,
+          verbose: false, // Since we are already logging the response, we don't need to log it again
           model: this.questionResponderModel,
           messages,
         }).call();
@@ -383,13 +386,20 @@ export class DataChunks extends BaseClass {
           answer = null;
         }
 
-        return {
-          answer: response.data.content!,
-          question: question,
-          data_chunk: data.id,
+        const returnData = {
+          answer,
+          question,
+          data_chunk: id,
           costs: response.costs.total,
           usage: response.usageData.total,
         };
+
+        this.log(
+          `respondQuestions`,
+          `DataChunk ID: ${id}\n\nQuestion: ${question}\n\nAnswer: ${answer}`,
+        );
+
+        return returnData;
       };
 
       const responsesPromises = data.map(respondQuestion);
