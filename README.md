@@ -51,6 +51,8 @@ To get started with AthenaDB, execute the following steps:
 - **LLM Expansion**: To enhance support for a wider array of Large Language Models (LLMs) beyond OpenAI GPT.
 - **Similarity Search Integration**: To include a preliminary similarity search using existing data embeddings, followed by a DataChunk search if needed.
 - **Image Support**: To support image data in addition to text data. The idea is to use `gpt-4-vision` to let users also search images with queries.
+- **Question Assigner Expansion**: Every Question Assigner receives as many DataChunk summaries as possible, but if there are too many, it will create a new Question Assigner and split the summaries between them. This process will be repeated until there are no more summaries to split.
+- **RealTime Data**: To support real-time data updates. We can skip the summarization from the DataChunks, and send the user question to all the available DataChunks, also skipping the Question Assigners. This will be useful for data that is constantly changing, like stock prices.
 
 ## Philosophy 🤔
 
