@@ -10,12 +10,16 @@ abstract class BaseRoute {
   readonly res: Response;
   private streaming: boolean = false; // The checkStreaming function is the only one that can set this property
   protected allowStreaming: boolean = false; // Whether to allow streaming or not
-  protected verbose: boolean; // Whether to log messages or not
+  protected verbose?: boolean; // Whether to log messages or not
 
   constructor(params: BaseRouteParams) {
     this.req = params.req;
     this.res = params.res;
-    this.verbose = params.verbose || false;
+    this.verbose = params.verbose;
+    if (typeof params.verbose === 'undefined') {
+      this.verbose = process.env.VERBOSE === 'true';
+    }
+
     this.allowStreaming = params.allowStreaming || false;
   }
 
@@ -29,6 +33,7 @@ abstract class BaseRoute {
    */
   private checkStreaming = () => {
     const streaming = this.req.body.streaming;
+
     if (streaming && this.allowStreaming) {
       if (typeof streaming !== 'boolean') {
         throw new Error('Streaming must be a boolean');

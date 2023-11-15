@@ -59,5 +59,7 @@ const server = app.listen(port, () => {
     typeof addressInfo === 'string'
       ? addressInfo
       : `http://localhost:${addressInfo?.port}`;
-  niceLog('App working', `App listening at ${address}`);
+  const verbose = process.env.VERBOSE === 'true';
+
+  niceLog('App working', `App listening at ${address}\n\nVerbose: ${verbose}`);
 });

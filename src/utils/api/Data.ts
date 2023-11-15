@@ -61,7 +61,7 @@ export class Data extends BaseClass {
     return this._dataChunks;
   }
 
-  constructor(params: DefaultClassParams) {
+  constructor(params: DefaultClassParams = {}) {
     super(params);
   }
 
@@ -264,6 +264,12 @@ export class Data extends BaseClass {
     }
   };
 
+  /**
+   * Creates new data in the Supabase database.
+   * @param params An object containing the data to be inserted and the data chunk ID.
+   * @returns A promise that resolves to an array of SupabaseData objects representing the newly created data.
+   * @throws An error if the given data does not have the same data chunk ID, or if there was an error inserting the data into the database.
+   */
   readonly createData = async (params: {
     data: DataInsert[];
     data_chunk: string;

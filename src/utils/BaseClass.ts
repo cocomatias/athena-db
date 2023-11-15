@@ -31,6 +31,10 @@ export class BaseClass {
 
   constructor(params: BaseClassParams) {
     this.verbose = params.verbose;
+    if (typeof params.verbose === 'undefined') {
+      this.verbose = process.env.VERBOSE === 'true';
+    }
+
     this.titleExtra = params.titleExtra;
     this.sendMessageFunction = params.sendMessageFunction;
   }

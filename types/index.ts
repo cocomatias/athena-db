@@ -139,7 +139,7 @@ export type SendMessageFunction = {
 };
 
 /*
- * ========= AI DB Data =========
+ * ========= Data =========
  */
 export type DataWithTokens = {
   tokens: number;
@@ -287,10 +287,9 @@ export type ProcessedDataChunk = SupabaseDataChunk & {
  * ========= BaseRoute =========
  */
 
-export type BaseRouteParams = {
+export type BaseRouteParams = DefaultClassParams & {
   req: Request;
   res: Response;
-  verbose?: boolean;
   allowStreaming?: boolean;
 };
 

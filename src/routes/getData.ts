@@ -21,9 +21,7 @@ export class GetDataRoute extends BaseRoute {
 
   execute = async () => {
     this.checkParams();
-    const data = await new Data({
-      verbose: this.verbose,
-    }).getData({
+    const data = await new Data().getData({
       ai_table_name: this.ai_table_name,
       ids: this.ids,
       tokensAscending: false,
@@ -34,7 +32,6 @@ export class GetDataRoute extends BaseRoute {
 }
 
 setupRoute(router, 'post', '/get-data', GetDataRoute, {
-  verbose: true,
   allowStreaming: false,
 });
 

@@ -19,7 +19,7 @@ export class DataResponder extends BaseClass {
   private conclusionModel: GPTModelName = GPTModelName.GPT316k;
   private tokensLimit = getTokensLimit(this.conclusionModel);
 
-  constructor(params: DefaultClassParams) {
+  constructor(params: DefaultClassParams = {}) {
     super(params);
   }
 
@@ -61,7 +61,7 @@ export class DataResponder extends BaseClass {
       },
       {
         role: 'user',
-        content: `Create a conclusion from the AI responses for the question: "${question}"`,
+        content: `Create a conclusion from the AI responses for the question: "${question}"\n\nRespond in the same language as the question.`,
       },
     ];
 
@@ -82,10 +82,13 @@ export class DataResponder extends BaseClass {
     const { question, ai_table_name } = params;
     try {
       // 1. Get the DataChunk answers
+      this.sendMessage('Assigning question to DataChunks...');
       const dataChunkAnswers = await this.questionAssigner.getDataChunkAnswers({
         question,
         ai_table_name,
       });
+
+      this.sendMessage(`Assigned ${dataChunkAnswers.data.length} DataChunks`);
 
       this.totalCosts += dataChunkAnswers.cost;
       this.totalUsage += dataChunkAnswers.usage;
@@ -96,6 +99,7 @@ export class DataResponder extends BaseClass {
         question,
       );
 
+      this.sendMessage('Creating conclusion...');
       // 2.1. If there is only one answer, return it as the conclusion
       if (dataChunkAnswers.data.length === 1) {
         const conclusion = dataChunkAnswers.data[0].answer;

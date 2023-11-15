@@ -21,9 +21,7 @@ class DeleteDataRoute extends BaseRoute {
 
   execute = async () => {
     this.checkParams();
-    const dm = new DataManager({
-      verbose: this.verbose,
-    });
+    const dm = new DataManager();
 
     const deleteDataResponse = await dm.delete({
       data_ids: this.ids,
@@ -35,7 +33,6 @@ class DeleteDataRoute extends BaseRoute {
 }
 
 setupRoute(router, 'post', '/delete-data', DeleteDataRoute, {
-  verbose: true,
   allowStreaming: false,
 });
 

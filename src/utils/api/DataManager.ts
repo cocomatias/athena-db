@@ -33,7 +33,7 @@ export class DataManager extends BaseClass {
   private totalUsage = 0;
   private totalCost = 0;
 
-  constructor(params: DefaultClassParams) {
+  constructor(params: DefaultClassParams = {}) {
     super(params);
   }
 

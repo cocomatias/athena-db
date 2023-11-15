@@ -8,7 +8,9 @@
   "scripts": {
     "prepare": "husky install",
     "dev": "nodemon --exec ts-node -r tsconfig-paths/register --ignore 'hnswlib-vs-*' src/index.ts",
+    "dev:verbose": "VERBOSE=true yarn dev",
     "start": "ts-node -r tsconfig-paths/register --ignore 'hnswlib-vs-*' src/index.ts",
+    "start:verbose": "VERBOSE=true yarn start",
     "check-types": "tsc --noEmit",
     "lint": "eslint --fix \"src/**/*.ts\"",
     "format": "prettier --write \"src/**/*.ts\""

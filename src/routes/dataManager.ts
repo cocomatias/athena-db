@@ -46,7 +46,6 @@ export class DataManagerRoute extends BaseRoute {
 
 setupRoute(router, 'post', '/data-manager', DataManagerRoute, {
   allowStreaming: false,
-  verbose: true,
 });
 
 export default router;

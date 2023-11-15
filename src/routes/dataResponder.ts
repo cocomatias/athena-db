@@ -27,9 +27,7 @@ class DataResponderRoute extends BaseRoute {
   };
   execute = async () => {
     this.checkParams();
-    const answer = await new DataResponder({
-      verbose: this.verbose,
-    }).ask({
+    const answer = await new DataResponder().ask({
       ai_table_name: this.ai_table_name!,
       question: this.question!,
     });
@@ -39,8 +37,7 @@ class DataResponderRoute extends BaseRoute {
 }
 
 setupRoute(router, 'post', '/data-responder', DataResponderRoute, {
-  verbose: true,
-  allowStreaming: false,
+  allowStreaming: true,
 });
 
 export default router;

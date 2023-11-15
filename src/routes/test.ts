@@ -13,12 +13,14 @@ import {
   // mockAssignedDataChunk,
   mockDBBigDataWithoutTokens,
   mockDBDataWithoutTokens,
+  mockGroupedDataObjects,
   // mockGroupedDataObjects,
   // mockGroupedSupabaseAIDBData,
 } from '@utils/mockData';
 // import { OpenAIEmbeddings } from '@utils/api/OpenAIEmbeddings';
 import { setupRoute } from '@utils/api/setupRoute';
 import abortablePromise from '@utils/api/abortablePromise';
+import { DataManager } from '@utils/api/DataManager';
 // import { Data } from '@utils/api/Data';
 
 const router = Router();
@@ -66,13 +68,12 @@ class TestRoute extends BaseRoute {
 class TestRoute2 extends BaseRoute {
   execute = async () => {
     // Example of promise
-    const myPromise = new Promise((resolve) =>
-      setTimeout(() => {
-        resolve('test');
-      }, 2000),
-    );
-
-    const test = await abortablePromise(myPromise, 3000); // Will timeout after 3 seconds
+    const data = mockGroupedDataObjects;
+    const test = await new DataManager({
+      verbose: true,
+    }).assignDataChunks({
+      data,
+    });
     this.returnResponse(test);
   };
 }

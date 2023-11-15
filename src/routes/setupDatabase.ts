@@ -9,14 +9,13 @@ router.use(express.json());
 
 export class SetupDatabaseRoute extends BaseRoute {
   execute = async () => {
-    const sb = SupabaseConnection.getInstance(true);
+    const sb = SupabaseConnection.getInstance();
     const setupDB = await sb.setupDB();
     this.returnResponse(setupDB);
   };
 }
 
 setupRoute(router, 'post', '/setup-database', SetupDatabaseRoute, {
-  verbose: true,
   allowStreaming: false,
 });
 

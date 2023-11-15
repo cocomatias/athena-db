@@ -1,11 +1,11 @@
-import { Pool } from 'pg';
-
 // Vendors
+import { Pool } from 'pg';
 import {
   SupabaseClient,
   createClient,
   PostgrestError,
 } from '@supabase/supabase-js';
+// Types
 import {
   DataChunkInsert,
   DataInsert,
@@ -191,6 +191,11 @@ export class SupabaseConnection extends BaseClass {
     return { data, error: error || null };
   };
 
+  /**
+   * Retrieves data from a Supabase table in chunks, using pagination.
+   * @param params - The query parameters, including the table name and any filters or sorting options.
+   * @returns A promise that resolves to a `SupabaseGetDataResponse` object containing the retrieved data and any errors.
+   */
   readonly getData = async (
     params: BaseQueryParams,
   ): Promise<SupabaseGetDataResponse<any>> => {
@@ -378,6 +383,11 @@ export class SupabaseConnection extends BaseClass {
     return SupabaseConnection.instance;
   }
 
+  /**
+   * Executes a SQL query using the Supabase client pool.
+   * @param query - The SQL query to execute.
+   * @returns An object containing the query result data or error message.
+   */
   private runSQL = async (query: string) => {
     const client = await this.pool.connect();
     try {
@@ -391,6 +401,10 @@ export class SupabaseConnection extends BaseClass {
     }
   };
 
+  /**
+   * Returns an object containing the SQL queries for creating the necessary tables and extensions in the Supabase database.
+   * @returns An object with the SQL queries for creating the necessary tables and extensions in the Supabase database.
+   */
   private getQueries = () => {
     // 1. Create extension query
     const extensionQuery = `CREATE EXTENSION IF NOT EXISTS vector`;
@@ -444,6 +458,11 @@ export class SupabaseConnection extends BaseClass {
     };
   };
 
+  /**
+   * Sets up the Supabase database by executing several queries to create the necessary tables and extensions.
+   * @returns An object containing messages indicating whether the extension and tables were created successfully.
+   * @throws An error if any of the queries fail to execute.
+   */
   public setupDB = async () => {
     try {
       // 1. Get quereis

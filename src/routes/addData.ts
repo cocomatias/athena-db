@@ -48,9 +48,7 @@ class AddDataRoute extends BaseRoute {
   };
   execute = async () => {
     this.checkParams();
-    const dm = new DataManager({
-      verbose: this.verbose,
-    });
+    const dm = new DataManager();
 
     const addedData = await dm.add({
       data: this.data!.map((d) => ({
@@ -60,7 +58,12 @@ class AddDataRoute extends BaseRoute {
       createAITableIfNotExists: true,
     });
 
-    this.returnResponse({ data: this.data, ai_table_name: this.ai_table_name });
+    this.returnResponse({
+      costs: addedData.cost,
+      usage: addedData.usage,
+      data: this.data,
+      ai_table_name: this.ai_table_name,
+    });
   };
 }
 
