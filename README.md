@@ -53,6 +53,7 @@ To get started with AthenaDB, execute the following steps:
 - **Image Support**: To support image data in addition to text data. The idea is to use `gpt-4-vision` to let users also search images with queries.
 - **Question Assigner Expansion**: Every Question Assigner receives as many DataChunk summaries as possible, but if there are too many, it will create a new Question Assigner and split the summaries between them. This process will be repeated until there are no more summaries to split.
 - **RealTime Data**: To support real-time data updates. We can skip the summarization from the DataChunks, and send the user question to all the available DataChunks, also skipping the Question Assigners. This will be useful for data that is constantly changing, like stock prices.
+- **General Tables Search**: For every AI Table, create a Summary of the DataChunk Summaries. This way, AtlasDB will only have a 'query' param without the need of explicity say what AI Table you want to search on. We can also pass the 'ai_db_table' to narrow the search
 
 ## Philosophy 🤔
 
